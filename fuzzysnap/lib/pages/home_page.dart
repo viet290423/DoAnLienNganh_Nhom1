@@ -83,7 +83,8 @@ class HomePage extends StatelessWidget {
           final posts = snapshot.data!.docs;
 
           // return as a list
-          return ListView.builder(
+          return PageView.builder(
+            scrollDirection: Axis.vertical,
             itemCount: posts.length,
             itemBuilder: (context, index) {
               // Get each individual post

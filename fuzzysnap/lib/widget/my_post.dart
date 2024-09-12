@@ -61,7 +61,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
   Widget _buildPostContent(
       BuildContext context, Map<String, dynamic>? user, String formattedTime) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
