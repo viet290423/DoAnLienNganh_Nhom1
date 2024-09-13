@@ -1,7 +1,6 @@
 import 'dart:io';
-// import 'dart:js_interop';
 import 'package:camera/camera.dart';
-import 'package:external_path/external_path.dart';
+import 'package:path_provider/path_provider.dart'; // Thay thế external_path bằng path_provider
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/add_post/post_page.dart';
 
@@ -21,34 +20,34 @@ class _CameraPageState extends State<CameraPage> {
   bool isRealCamera = true;
 
   Future<File> saveImage(XFile image) async {
-    final dowloadPath = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
+    final directory = await getApplicationDocumentsDirectory();
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
-    final file = File('$dowloadPath/$fileName');
+    final file = File('${directory.path}/$fileName');
 
     try {
       await file.writeAsBytes(await image.readAsBytes());
-    } catch (_) {}
+    } catch (e) {
+      print('Error saving image: $e');
+    }
 
     return file;
   }
 
-  void takePicture() async {
-    XFile? image;
-    if (cameraController.value.isTakingPicture ||
-        !cameraController.value.isInitialized) {
+  Future<void> takePicture() async {
+    if (!cameraController.value.isInitialized || cameraController.value.isTakingPicture) {
       return;
     }
-    if (isFlashOn == false) {
-      await cameraController.setFlashMode(FlashMode.off);
-    } else {
+
+    if (isFlashOn) {
       await cameraController.setFlashMode(FlashMode.torch);
+    } else {
+      await cameraController.setFlashMode(FlashMode.off);
     }
-    image = await cameraController.takePicture();
+
+    XFile image = await cameraController.takePicture();
+
     if (cameraController.value.flashMode == FlashMode.torch) {
-      setState(() {
-        cameraController.setFlashMode(FlashMode.off);
-      });
+      await cameraController.setFlashMode(FlashMode.off);
     }
 
     final file = await saveImage(image);
@@ -58,34 +57,34 @@ class _CameraPageState extends State<CameraPage> {
       context,
       MaterialPageRoute(
           builder: (context) => PostPage(
-                imageFile: file,
-                cameraAspectRatio: cameraController.value.aspectRatio,
-              )),
+            imageFile: file,
+            cameraAspectRatio: cameraController.value.aspectRatio,
+          )),
     );
   }
 
-  void startCamera(int camera) {
+  void startCamera(int camera) async {
     cameraController = CameraController(
         widget.cameras[camera], ResolutionPreset.high,
         enableAudio: false);
     cameraValue = cameraController.initialize();
+    setState(() {});
   }
 
+  @override
   void initState() {
-    startCamera(0);
     super.initState();
+    if (widget.cameras.isNotEmpty) {
+      startCamera(0);
+    } else {
+      // Xử lý lỗi không có camera
+      print('No cameras available');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: const FloatingActionButton(
-      //   backgroundColor: Color.fromRGBO(255, 255, 255, 7),
-      //   onPressed: null,
-      //   shape: CircleBorder(),
-      //   child: Icon(Icons.camera_alt_rounded, size: 40,),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         forceMaterialTransparency: true,
         foregroundColor: Colors.black,
@@ -103,14 +102,7 @@ class _CameraPageState extends State<CameraPage> {
         child: Center(
           child: Column(
             children: [
-              // const Padding(
-              //     padding: const EdgeInsets.only(top: 50, left: 25),
-              //     child: Center(
-              //       child: Text("TAKE GREAT PICTURE"),
-              //     )),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               FutureBuilder(
                   future: cameraValue,
                   builder: (context, snapshot) {
@@ -135,25 +127,22 @@ class _CameraPageState extends State<CameraPage> {
                           ),
                         ),
                       );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
                   }),
-              const SizedBox(
-                height: 60,
-              ),
+              const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // change camera
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         isRealCamera = !isRealCamera;
+                        startCamera(isRealCamera ? 0 : 1);
                       });
-                      isRealCamera ? startCamera(0) : startCamera(1);
                     },
                     child: Container(
                         width: 60,
@@ -164,12 +153,11 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                         child: isRealCamera
                             ? const Icon(Icons.camera_rear,
-                                color: Color(0xFF4E7360))
+                            color: Color(0xFF4E7360))
                             : const Icon(Icons.camera_front,
-                                color: Color(0xFF4E7360))),
+                            color: Color(0xFF4E7360))),
                   ),
                   const SizedBox(width: 40),
-                  // take photo
                   GestureDetector(
                     onTap: () {
                       takePicture();
@@ -188,7 +176,6 @@ class _CameraPageState extends State<CameraPage> {
                     ),
                   ),
                   const SizedBox(width: 40),
-                  //flash mode
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -204,15 +191,15 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                       child: isFlashOn
                           ? const Icon(
-                              Icons.flash_on,
-                              color: Color(0xFF4E7360),
-                              size: 30,
-                            )
+                        Icons.flash_on,
+                        color: Color(0xFF4E7360),
+                        size: 30,
+                      )
                           : const Icon(
-                              Icons.flash_off,
-                              color: Color(0xFF4E7360),
-                              size: 30,
-                            ),
+                        Icons.flash_off,
+                        color: Color(0xFF4E7360),
+                        size: 30,
+                      ),
                     ),
                   ),
                 ],
@@ -222,5 +209,11 @@ class _CameraPageState extends State<CameraPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
   }
 }
