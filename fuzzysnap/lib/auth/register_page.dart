@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': userCredential.user!.email,
         'username': usernameController.text,
       });
-    }
+    } 
   }
 
   //wrong email message popup

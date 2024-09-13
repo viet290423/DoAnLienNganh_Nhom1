@@ -10,6 +10,7 @@ class MyPost extends StatefulWidget {
   final String userName;
   final Timestamp timestamp;
   final String imageUrl;
+  final String postId;
 
   const MyPost({
     super.key,
@@ -18,6 +19,7 @@ class MyPost extends StatefulWidget {
     required this.userName,
     required this.timestamp,
     required this.imageUrl,
+    required this.postId,
   });
 
   @override
@@ -60,10 +62,31 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
 
   Widget _buildPostContent(
       BuildContext context, Map<String, dynamic>? user, String formattedTime) {
+    void _removePost() async {
+      try {
+        await FirebaseFirestore.instance
+            .collection('Posts')
+            .doc(widget.postId) // Xóa dựa trên postId
+            .delete();
+
+        // Hiển thị thông báo thành công hoặc điều hướng sau khi xóa
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post removed successfully')),
+        );
+      } catch (e) {
+        print('Error removing post: $e');
+        // Hiển thị thông báo lỗi nếu có
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text('Error removing post')),
+        // );
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
@@ -77,55 +100,123 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(
+            left: 20,
+            top: 20,
+            right: 20,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    backgroundImage: user?['profile_image'] != null
-                        ? NetworkImage(user!['profile_image'])
-                        : null,
-                    child: user?['profile_image'] == null
-                        ? const Icon(Icons.person, size: 32)
-                        : null,
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 20,
-                        child: Text(
-                          widget.userName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 5,
                           ),
-                        ),
+                          CircleAvatar(
+                            backgroundImage: user?['profile_image'] != null
+                                ? NetworkImage(user!['profile_image'])
+                                : null,
+                            child: user?['profile_image'] == null
+                                ? const Icon(Icons.person, size: 32)
+                                : null,
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 20,
-                        child: Text(
-                          formattedTime, // Display the formatted timestamp here
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w400,
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            // height: 24,
+                            child: Text(
+                              widget.userName,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(
+                            // height: 20,
+                            child: Text(
+                              formattedTime, // Display the formatted timestamp here
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  PopupMenuButton<String>(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    onSelected: (value) {
+                      if (value == 'Edit') {
+                        // Xử lý khi chọn Edit (điều hướng tới trang chỉnh sửa chẳng hạn)
+                        print("Edit selected");
+                      } else if (value == 'Remove') {
+                        // Xử lý khi chọn Remove (xóa bài post)
+                        _removePost(); // Gọi hàm để xóa post
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'Edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, color: Colors.blue),
+                            SizedBox(width: 10),
+                            Text(
+                              'Edit',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'Remove',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete_outline, color: Colors.red),
+                            SizedBox(width: 10),
+                            Text(
+                              'Remove',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    icon: Icon(Icons.more_vert, color: Colors.grey[700]),
+                  )
                 ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               GestureDetector(
                 onDoubleTap: () {
                   _isFavoriteNotifier.value = !_isFavoriteNotifier.value;
@@ -149,7 +240,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                   widget.title,
                   style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 18,
+                    fontSize: 15,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),

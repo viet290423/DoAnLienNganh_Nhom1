@@ -94,6 +94,7 @@ class HomePage extends StatelessWidget {
               String imageUrl = post['ImageUrl'] ?? '';
               String message = post['PostMessage'] ?? 'No message';
               String userEmail = post['UserEmail'] ?? 'Unknown';
+              String id = post['PostId'] ?? '';
               Timestamp timestamp = post['TimeStamp'] ?? Timestamp.now();
 
               // Truy vấn collection User để lấy username
@@ -120,6 +121,7 @@ class HomePage extends StatelessWidget {
                         userName: userName,
                         timestamp: timestamp,
                         imageUrl: imageUrl,
+                        postId: id,
                       );
                     } else {
                       return ListTile(
