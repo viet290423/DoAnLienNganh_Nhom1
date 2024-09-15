@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: AuthPage(cameras: cameras),
       routes: {
+        '/auth_page' : (context) => AuthPage(cameras: cameras),
         '/login_register_page': (context) => const LoginOrRegisterPage(),
         '/main_page' : (context) => MainPage(cameras: cameras,),
         '/home_page' : (context) => HomePage(),

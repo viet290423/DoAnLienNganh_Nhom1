@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/pages/setting/change_password_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AccountPage extends StatefulWidget {
@@ -122,6 +123,13 @@ class _ProfilePageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: IconButton(onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordPage()));
+        }, icon: Icon(Icons.settings),
+
+        ),
+      ),
       body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
         future: getUserDetails(),
         builder: (context, snapshot) {
