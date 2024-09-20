@@ -36,7 +36,7 @@
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           actions: [
             IconButton(
@@ -48,13 +48,13 @@
           ],
           forceMaterialTransparency: true,
           centerTitle: false,
-          backgroundColor: Colors.white,
-          title: const Padding(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: Padding(
             padding: EdgeInsets.only(left: 30),
             child: Text(
               'FUZZYSNAP',
               style: TextStyle(
-                color: Colors.black,
+                // color: Theme.of(context).colorScheme.primary,
                 fontSize: 20,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w800,

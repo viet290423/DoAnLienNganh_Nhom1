@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/auth/auth_page.dart';
 import 'package:fuzzysnap/auth/login_or_register_page.dart';
+import 'package:fuzzysnap/widget/my_textfield.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -73,137 +74,56 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        // backgroundColor: Theme.of(context).colorScheme.surface,
+        // foregroundColor: Theme.of(context).colorScheme.surface,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
+            Text(
               'Old Password',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
             ),
             const SizedBox(height: 10),
-            TextField(
-              obscureText: true,
+            MyTextField(
               controller: _oldPasswordController,
-              decoration: InputDecoration(
-                hintText: 'Enter old password',
-                filled: true,
-                fillColor: const Color(0xFFF2E7D5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
-              ),
-            ),
+              hintText: 'Enter old password',
+              obscureText: true),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'New Password',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
             ),
             const SizedBox(height: 10),
-            TextField(
-              obscureText: true,
+            MyTextField(
               controller: _newPasswordController,
-              decoration: InputDecoration(
-                hintText: 'Enter new password',
-                filled: true,
-                fillColor: const Color(0xFFF2E7D5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
-              ),
-            ),
+              hintText: 'Enter new password',
+              obscureText: true),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'Confirm Password',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
             ),
             const SizedBox(height: 10),
-            TextField(
-              obscureText: true,
-              controller: _confirmPasswordController,
-              decoration: InputDecoration(
+            MyTextField(
+                controller: _confirmPasswordController,
                 hintText: 'Confirm new password',
-                filled: true,
-                fillColor: const Color(0xFFF2E7D5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
-              ),
-            ),
+                obscureText: true),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {

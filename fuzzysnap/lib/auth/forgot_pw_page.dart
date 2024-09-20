@@ -52,7 +52,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             ),
             MyTextField(
                 controller: emailController,
-                labelText: "Email",
+                hintText: "Email",
                 obscureText: false),
             MaterialButton(
               onPressed: () {

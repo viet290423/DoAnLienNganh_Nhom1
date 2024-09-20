@@ -101,17 +101,23 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                MyTextField(
-                    controller: emailController,
-                    labelText: "Email",
-                    obscureText: false),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: emailController,
+                      hintText: "Email",
+                      obscureText: false),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
-                MyTextField(
-                    controller: passwordController,
-                    labelText: "Password",
-                    obscureText: true),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      obscureText: true),
+                ),
                 const SizedBox(
                   height: 10,
                 ),

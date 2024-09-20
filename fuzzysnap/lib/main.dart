@@ -9,6 +9,8 @@ import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/main_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
+import 'package:fuzzysnap/provider/provider.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,18 +28,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthPage(cameras: cameras),
-      routes: {
-        '/auth_page' : (context) => AuthPage(cameras: cameras),
-        '/login_register_page': (context) => const LoginOrRegisterPage(),
-        '/main_page' : (context) => MainPage(cameras: cameras,),
-        '/home_page' : (context) => HomePage(),
-        '/notification_page' : (context) => NotificationPage(),
-        '/camera_page' : (context) => CameraPage(cameras: cameras,),
-        '/chat_page' : (context) => const ChatPage(),
-      }, 
+    return ChangeNotifierProvider(
+      create: (BuildContext context)=>UiProvider()..init(),
+      child: Consumer<UiProvider>(
+        builder: (context, UiProvider notifier, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+
+            themeMode: notifier.isDark? ThemeMode.dark : ThemeMode.light,
+
+            //Our custom theme applied
+            darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
+
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple,
+                primary: Colors.black,
+                secondary: Colors.black,
+                onPrimary: Colors.white,
+                onSecondary: Colors.black,
+              ),
+              useMaterial3: true,
+            ),
+            home: AuthPage(cameras: cameras),
+            routes: {
+              '/auth_page' : (context) => AuthPage(cameras: cameras),
+              '/login_register_page': (context) => const LoginOrRegisterPage(),
+              '/main_page' : (context) => MainPage(cameras: cameras,),
+              '/home_page' : (context) => HomePage(),
+              '/notification_page' : (context) => NotificationPage(),
+              '/camera_page' : (context) => CameraPage(cameras: cameras,),
+              '/chat_page' : (context) => const ChatPage(),
+            },
+          );
+        }
+      ),
     );
   }
 }
