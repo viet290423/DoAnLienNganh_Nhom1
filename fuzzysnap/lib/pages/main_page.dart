@@ -30,8 +30,8 @@ class _MainPageState extends State<MainPage> {
     screens.addAll([
       HomePage(),
       NotificationPage(),
-      //CameraPage(cameras: widget.cameras), // Truyền cameras cho CameraPage
-      ChangePasswordPage(),
+      CameraPage(cameras: widget.cameras), // Truyền cameras cho CameraPage
+      //ChangePasswordPage(),
       ChatPage(),
       AccountPage()
     ]);
