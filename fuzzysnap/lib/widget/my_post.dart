@@ -88,7 +88,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(30),
           boxShadow: const [
             BoxShadow(
@@ -141,7 +141,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                             child: Text(
                               widget.userName,
                               style: const TextStyle(
-                                color: Colors.black,
+                                // color: Colors.black,
                                 fontSize: 12,
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w700,
@@ -165,7 +165,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                     ],
                   ),
                   PopupMenuButton<String>(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -188,7 +188,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                             Text(
                               'Edit',
                               style: TextStyle(
-                                color: Colors.black,
+                                // color: Colors.black,
                                 fontSize: 16,
                               ),
                             ),
@@ -204,7 +204,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                             Text(
                               'Remove',
                               style: TextStyle(
-                                color: Colors.black,
+                                // color: Colors.black,
                                 fontSize: 16,
                               ),
                             ),
@@ -239,7 +239,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                 child: Text(
                   widget.title,
                   style: const TextStyle(
-                    color: Colors.black,
+                    // color: Colors.black,
                     fontSize: 15,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
@@ -269,9 +269,9 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
 
   Widget _buildCommentButton() {
     return IconButton(
-      icon: const Icon(
+      icon: Icon(
         CupertinoIcons.chat_bubble,
-        color: Colors.black,
+        color: Theme.of(context).colorScheme.onSecondary,
         size: 30,
         // weight: 100,
       ),

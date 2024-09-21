@@ -17,7 +17,7 @@ class LikeButton extends StatelessWidget {
       builder: (context, isFavorite, child) {
         return IconButton(
           icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.black, size: 30),
+              color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSecondary, size: 30),
           onPressed: () {
             bool newValue = !isFavorite;
             isFavoriteNotifier.value = newValue;

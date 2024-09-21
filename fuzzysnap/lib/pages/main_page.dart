@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
+import 'package:fuzzysnap/pages/account/profile_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
@@ -40,21 +41,21 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: IndexedStack(
         index: _currentIndex,
         children: screens,
       ),
       bottomNavigationBar: Container(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: GNav(
             selectedIndex: _currentIndex,
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             color: Colors.grey[400],
-            activeColor: Colors.black,
-            tabBackgroundColor: Colors.white,
+            activeColor: Theme.of(context).colorScheme.onSecondary,
+            tabBackgroundColor: Theme.of(context).colorScheme.surface,
             gap: 5,
             tabs: const [
               GButton(

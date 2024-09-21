@@ -72,10 +72,13 @@ class _PostPageState extends State<PostPage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  MyTextField(
-                    controller: messageController,
-                    obscureText: false,
-                    labelText: "Enter the message",
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: MyTextField(
+                      controller: messageController,
+                      obscureText: false,
+                      hintText: "Enter the message",
+                    ),
                   ),
                   const SizedBox(
                     height: 20,

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/auth/forgot_pw_page.dart';
 import 'package:fuzzysnap/service/auth_service.dart';
 import 'package:fuzzysnap/widget/my_button.dart';
 import 'package:fuzzysnap/widget/my_textfield.dart';
@@ -100,17 +101,23 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                MyTextField(
-                    controller: emailController,
-                    labelText: "Email",
-                    obscureText: false),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: emailController,
+                      hintText: "Email",
+                      obscureText: false),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
-                MyTextField(
-                    controller: passwordController,
-                    labelText: "Password",
-                    obscureText: true),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      obscureText: true),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -121,9 +128,9 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          //   return ForgotPasswordPage();
-                          // }));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return ForgotPasswordPage();
+                          }));
                         },
                         child: Text(
                           "Forgot Password?",

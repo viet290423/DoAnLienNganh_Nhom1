@@ -1,19 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/pages/setting/change_password_page.dart';
+import 'package:fuzzysnap/pages/setting/setting_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AccountPage extends StatefulWidget {
-  AccountPage({super.key});
-
   @override
-  State<AccountPage> createState() => _ProfilePageState();
+  _AccountPageState createState() => _AccountPageState();
 }
 
-class _ProfilePageState extends State<AccountPage> {
+class _AccountPageState extends State<AccountPage> {
+  int friendCount = 0;
+
   final User? currentUser = FirebaseAuth.instance.currentUser;
   File? _selectedImage;
   bool _isLoading = false;
@@ -101,12 +103,12 @@ class _ProfilePageState extends State<AccountPage> {
             .doc(currentUser!.email)
             .update({'username': _usernameController.text});
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cập nhật tên người dùng thành công')),
+          SnackBar(content: Text('Cập nhật tên người dùng thành công')),
         );
       } catch (e) {
         print("Error saving username: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
+          SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
         );
       }
     }
@@ -120,85 +122,228 @@ class _ProfilePageState extends State<AccountPage> {
         .get();
   }
 
+  // hàm đếm số bài đăng của người dùng
+  Future<int> _getPostCount() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('Posts')
+          .where('UserEmail', isEqualTo: currentUser!.email)
+          .get();
+      return querySnapshot.size;
+    } catch (e) {
+      print("Error getting post count: $e");
+      return 0;
+    }
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: IconButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordPage()));
-        }, icon: Icon(Icons.settings),
-
-        ),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-        future: getUserDetails(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          future: getUserDetails(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+            } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
-          } else if (snapshot.hasData) {
-            Map<String, dynamic>? user = snapshot.data!.data();
-
-            return Center(
-              child: Column(
+            } else if (snapshot.hasData) {
+              Map<String, dynamic>? user = snapshot.data!.data();
+              return Column(
                 children: [
                   const SizedBox(height: 25),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Stack(
-                      alignment: Alignment.center,
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CircleAvatar(
-                          radius: 64,
-                          backgroundImage: user?['profile_image'] != null
-                              ? NetworkImage(user!['profile_image'])
-                              : _selectedImage != null
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 54,
+                              backgroundImage: user?['profile_image'] != null
+                                  ? NetworkImage(user!['profile_image'])
+                                  : _selectedImage != null
                                   ? FileImage(_selectedImage!)
                                   : null,
-                          child: _selectedImage == null &&
-                                  user?['profile_image'] == null
-                              ? const Icon(Icons.person, size: 100)
-                              : null,
+                              child: _selectedImage == null && user?['profile_image'] == null
+                                  ? const Icon(Icons.person, size: 100)
+                                  : null,
+                            ),
+                            if (_isLoading) const CircularProgressIndicator(),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _pickImage, // Hàm để chọn ảnh
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.withOpacity(0.7),
+                                  ),
+                                  padding: const EdgeInsets.all(8),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        if (_isLoading) const CircularProgressIndicator(),
+                        Text(
+                          user?['username'] ?? 'No Username',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          iconSize: 40,
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
+                          },
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 25),
-                  // Thêm TextField để thay đổi username
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        border: OutlineInputBorder(),
-                      ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const Text('Post', style: TextStyle(fontSize: 20)),
+                            FutureBuilder<int>(
+                              future: _getPostCount(), // Call the method to get the post count
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+                                return Text(
+                                  '${snapshot.data ?? 0}', // Display the post count
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF6D9886),
+                                  ),
+                                );
+                              },
+                            ),
+
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+
+                              },
+                              child: Column(
+                                children: [
+                                  Text('Friends',
+                                      style: TextStyle(fontSize: 20)),
+                                  Text(
+                                    '$friendCount',
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF6D9886),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    user?['email'] ?? 'Email not available',
-                    style: TextStyle(
-                        color: Colors.grey[600], fontWeight: FontWeight.bold),
-                  ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                      onPressed: _saveChanges,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black),
-                      child: const Text('Lưu thay đổi',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold))),
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Posts')
+                          .where('UserEmail', isEqualTo: currentUser!.email)
+                          .orderBy('TimeStamp', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (snapshot.hasError) {
+                          return Center(child: Text("Error: ${snapshot.error}"));
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Center(child: Text("No posts yet"));
+                        }
+
+                        var posts = snapshot.data!.docs;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 4.0,
+                              mainAxisSpacing: 4.0,
+                            ),
+                            itemCount: posts.length,
+                            itemBuilder: (context, index) {
+                              var post = posts[index];
+                              var imageUrl = post['ImageUrl'];
+
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => HomePage(
+                                  //       postId: post['PostId'],
+                                  //     ),
+                                  //   ),
+                                  // );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: NetworkImage(imageUrl),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  )
+
                 ],
-              ),
-            );
-          } else {
-            return const Text("No data");
-          }
-        },
+              );
+            }
+            else {
+              return const Text("No data");
+            }
+        }
       ),
     );
   }
