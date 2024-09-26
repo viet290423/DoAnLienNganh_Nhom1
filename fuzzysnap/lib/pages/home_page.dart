@@ -3,6 +3,7 @@
   import 'package:flutter/material.dart';
   import 'package:fuzzysnap/database/firestore.dart';
   import 'package:fuzzysnap/widget/my_post.dart';
+import 'package:fuzzysnap/widget/search_friend_widget.dart';
 
   class HomePage extends StatelessWidget {
     HomePage({super.key});
@@ -40,10 +41,14 @@
         appBar: AppBar(
           actions: [
             IconButton(
-              onPressed: (){
-                signUserOut(context);
-              },
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate:
+                    FriendSearchDelegate(), // Sử dụng lớp FriendSearchDelegate
+              );
+            },
             )
           ],
           forceMaterialTransparency: true,

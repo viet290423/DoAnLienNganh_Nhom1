@@ -13,7 +13,6 @@ import firebase_storage
 import google_sign_in_ios
 import path_provider_foundation
 import photo_manager
-
 import shared_preferences_foundation
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
