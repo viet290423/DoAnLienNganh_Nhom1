@@ -37,7 +37,7 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Yêu cầu kết bạn'),
+        title: Text('Thông báo'),
       ),
       body: friendRequests.isEmpty
           ? Center(child: Text('Không có yêu cầu kết bạn.'))
