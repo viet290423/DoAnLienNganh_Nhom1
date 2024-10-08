@@ -45,15 +45,15 @@ class _MainPageState extends State<MainPage> {
         children: screens,
       ),
       bottomNavigationBar: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.onPrimary,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: GNav(
             selectedIndex: _currentIndex,
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
             color: Colors.grey[400],
             activeColor: Theme.of(context).colorScheme.onSecondary,
-            tabBackgroundColor: Theme.of(context).colorScheme.surface,
+            tabBackgroundColor: Theme.of(context).colorScheme.onPrimary,
             gap: 5,
             tabs: const [
               GButton(

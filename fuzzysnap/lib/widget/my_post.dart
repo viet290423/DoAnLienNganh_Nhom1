@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/app/dimensions.dart';
 import 'package:fuzzysnap/widget/like_button.dart';
 import 'package:intl/intl.dart';
 
@@ -83,7 +84,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         width: double.infinity,
         height: double.infinity,
@@ -118,9 +119,6 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                     children: [
                       Column(
                         children: [
-                          SizedBox(
-                            height: 5,
-                          ),
                           CircleAvatar(
                             backgroundImage: user?['profile_image'] != null
                                 ? NetworkImage(user!['profile_image'])
@@ -142,7 +140,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                               widget.userName,
                               style: const TextStyle(
                                 // color: Colors.black,
-                                fontSize: 12,
+                                fontSize: 16,
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w700,
                               ),
