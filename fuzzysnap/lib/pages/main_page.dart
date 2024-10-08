@@ -7,6 +7,7 @@ import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:iconsax/iconsax.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -37,27 +38,27 @@ class _MainPageState extends State<MainPage> {
             gap: 5,
             tabs: const [
               GButton(
-                icon: Icons.home_outlined,
+                icon: Iconsax.home,
                 iconSize: 30,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
               GButton(
-                icon: CupertinoIcons.bell,
+                icon: Iconsax.notification,
                 iconSize: 30,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
               GButton(
-                icon: CupertinoIcons.camera,
+                icon: Iconsax.camera,
                 iconSize: 30,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
               GButton(
-                icon: CupertinoIcons.conversation_bubble,
+                icon: Iconsax.messages,
                 iconSize: 30,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
               GButton(
-                icon: CupertinoIcons.person,
+                icon: Iconsax.user,
                 iconSize: 30,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
@@ -81,7 +82,8 @@ class _MainPageState extends State<MainPage> {
       case 1:
         return NotificationPage();
       case 2:
-        return CameraPage(cameras: widget.cameras); // Truyền cameras cho CameraPage
+        return CameraPage(
+            cameras: widget.cameras); // Truyền cameras cho CameraPage
       case 3:
         return const ChatPage();
       case 4:

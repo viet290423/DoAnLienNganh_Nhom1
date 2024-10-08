@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/friend_list_account.dart';
 import 'package:fuzzysnap/pages/setting/setting_page.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AccountPage extends StatefulWidget {
@@ -46,6 +47,7 @@ class _AccountPageState extends State<AccountPage> {
       }
     }
   }
+
   // Hàm để tải số lượng bạn bè từ Firestore
   Future<void> _loadFriendCount() async {
     if (currentUser != null) {
@@ -222,7 +224,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.settings),
+                          icon: const Icon(Iconsax.setting_2),
                           iconSize: 40,
                           onPressed: () {
                             Navigator.push(
@@ -308,7 +310,8 @@ class _AccountPageState extends State<AccountPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
 
                         if (snapshot.hasError) {
