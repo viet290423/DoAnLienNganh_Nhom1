@@ -7,6 +7,7 @@ import 'package:fuzzysnap/pages/add_post/camera_page.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
+import 'package:fuzzysnap/pages/setting/change_password_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _MainPageState extends State<MainPage> {
       HomePage(),
       NotificationPage(),
       CameraPage(cameras: widget.cameras), // Truyền cameras cho CameraPage
+      //ChangePasswordPage(),
       ChatPage(),
       AccountPage()
     ]);

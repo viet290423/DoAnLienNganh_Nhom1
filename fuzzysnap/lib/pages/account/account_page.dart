@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/pages/account/friend_list_account.dart';
 import 'package:fuzzysnap/pages/setting/setting_page.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,6 +28,7 @@ class _AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
     _loadUserData(); // Load dữ liệu người dùng khi khởi tạo
+    _loadFriendCount(); // Load số lượng bạn bè khi khởi tạo
   }
 
   // Hàm để tải dữ liệu người dùng từ Firestore và gán vào TextEditingController
@@ -39,6 +41,22 @@ class _AccountPageState extends State<AccountPage> {
       final userData = userDoc.data();
       if (userData != null) {
         _usernameController.text = userData['username'] ?? '';
+      }
+    }
+  }
+  // Hàm để tải số lượng bạn bè từ Firestore
+  Future<void> _loadFriendCount() async {
+    if (currentUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('User')
+          .doc(currentUser!.email)
+          .get();
+
+      if (userDoc.exists) {
+        List<dynamic> friends = userDoc.data()?['listFriend'] ?? [];
+        setState(() {
+          friendCount = friends.length; // Cập nhật số lượng bạn bè
+        });
       }
     }
   }
@@ -136,9 +154,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,9 +162,9 @@ class _AccountPageState extends State<AccountPage> {
           future: getUserDetails(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-            return Text("Error: ${snapshot.error}");
+              return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
               Map<String, dynamic>? user = snapshot.data!.data();
               return Column(
@@ -168,9 +183,10 @@ class _AccountPageState extends State<AccountPage> {
                               backgroundImage: user?['profile_image'] != null
                                   ? NetworkImage(user!['profile_image'])
                                   : _selectedImage != null
-                                  ? FileImage(_selectedImage!)
-                                  : null,
-                              child: _selectedImage == null && user?['profile_image'] == null
+                                      ? FileImage(_selectedImage!)
+                                      : null,
+                              child: _selectedImage == null &&
+                                      user?['profile_image'] == null
                                   ? const Icon(Icons.person, size: 100)
                                   : null,
                             ),
@@ -207,7 +223,10 @@ class _AccountPageState extends State<AccountPage> {
                           icon: const Icon(Icons.settings),
                           iconSize: 40,
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SettingPage()));
                           },
                         ),
                       ],
@@ -223,9 +242,11 @@ class _AccountPageState extends State<AccountPage> {
                           children: [
                             const Text('Post', style: TextStyle(fontSize: 20)),
                             FutureBuilder<int>(
-                              future: _getPostCount(), // Call the method to get the post count
+                              future:
+                                  _getPostCount(), // Call the method to get the post count
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
                                   return const CircularProgressIndicator();
                                 }
                                 if (snapshot.hasError) {
@@ -241,14 +262,18 @@ class _AccountPageState extends State<AccountPage> {
                                 );
                               },
                             ),
-
                           ],
                         ),
                         Column(
                           children: [
                             GestureDetector(
                               onTap: () {
-
+                                // Điều hướng đến trang FriendListPage
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FriendListPage()),
+                                );
                               },
                               child: Column(
                                 children: [
@@ -279,12 +304,14 @@ class _AccountPageState extends State<AccountPage> {
                           .orderBy('TimeStamp', descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(child: CircularProgressIndicator());
                         }
 
                         if (snapshot.hasError) {
-                          return Center(child: Text("Error: ${snapshot.error}"));
+                          return Center(
+                              child: Text("Error: ${snapshot.error}"));
                         }
 
                         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -296,7 +323,8 @@ class _AccountPageState extends State<AccountPage> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
                               crossAxisSpacing: 4.0,
                               mainAxisSpacing: 4.0,
@@ -336,15 +364,12 @@ class _AccountPageState extends State<AccountPage> {
                       },
                     ),
                   )
-
                 ],
               );
-            }
-            else {
+            } else {
               return const Text("No data");
             }
-        }
-      ),
+          }),
     );
   }
 }
