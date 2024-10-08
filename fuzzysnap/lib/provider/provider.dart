@@ -17,7 +17,7 @@ class UiProvider extends ChangeNotifier{
           secondary: Colors.grey[850]!,
           onSecondary: Colors.white
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: Colors.white),
       )
@@ -31,7 +31,7 @@ class UiProvider extends ChangeNotifier{
         primary:  Colors.white,
         secondary: Colors.grey[600]!,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),

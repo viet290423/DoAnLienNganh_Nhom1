@@ -5,10 +5,10 @@ class LikeButton extends StatelessWidget {
   final void Function(bool) onFavoriteChanged;
 
   const LikeButton({
-    Key? key,
+    super.key,
     required this.isFavoriteNotifier,
     required this.onFavoriteChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

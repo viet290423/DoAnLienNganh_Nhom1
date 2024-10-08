@@ -89,7 +89,7 @@ class _PostPageState extends State<PostPage> {
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 40)),
                       child: const Text(
                         "Post",

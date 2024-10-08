@@ -10,6 +10,8 @@ import 'package:fuzzysnap/pages/setting/setting_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AccountPage extends StatefulWidget {
+  const AccountPage({super.key});
+
   @override
   _AccountPageState createState() => _AccountPageState();
 }
@@ -121,12 +123,12 @@ class _AccountPageState extends State<AccountPage> {
             .doc(currentUser!.email)
             .update({'username': _usernameController.text});
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Cập nhật tên người dùng thành công')),
+          const SnackBar(content: Text('Cập nhật tên người dùng thành công')),
         );
       } catch (e) {
         print("Error saving username: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
+          const SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
         );
       }
     }
@@ -234,7 +236,7 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                   const SizedBox(height: 10),
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -277,7 +279,7 @@ class _AccountPageState extends State<AccountPage> {
                               },
                               child: Column(
                                 children: [
-                                  Text('Friends',
+                                  const Text('Friends',
                                       style: TextStyle(fontSize: 20)),
                                   Text(
                                     '$friendCount',
@@ -306,7 +308,7 @@ class _AccountPageState extends State<AccountPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         }
 
                         if (snapshot.hasError) {
@@ -315,7 +317,7 @@ class _AccountPageState extends State<AccountPage> {
                         }
 
                         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return Center(child: Text("No posts yet"));
+                          return const Center(child: Text("No posts yet"));
                         }
 
                         var posts = snapshot.data!.docs;

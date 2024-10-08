@@ -2,17 +2,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
-import 'package:fuzzysnap/pages/account/profile_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
-import 'package:fuzzysnap/pages/setting/change_password_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const MainPage({Key? key, required this.cameras}) : super(key: key);
+  const MainPage({super.key, required this.cameras});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -21,31 +19,11 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
-  // Sử dụng widget.cameras để truyền danh sách camera
-  final List<Widget> screens = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // Khởi tạo danh sách các màn hình, bao gồm HomePage và CameraPage
-    screens.addAll([
-      HomePage(),
-      NotificationPage(),
-      CameraPage(cameras: widget.cameras), // Truyền cameras cho CameraPage
-      //ChangePasswordPage(),
-      ChatPage(),
-      AccountPage()
-    ]);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      body: _buildPage(_currentIndex), // Load lại page mỗi khi đổi tab
       bottomNavigationBar: Container(
         color: Theme.of(context).colorScheme.onPrimary,
         child: Padding(
@@ -93,5 +71,23 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  // Hàm này trả về trang tương ứng với chỉ số
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0:
+        return HomePage();
+      case 1:
+        return NotificationPage();
+      case 2:
+        return CameraPage(cameras: widget.cameras); // Truyền cameras cho CameraPage
+      case 3:
+        return const ChatPage();
+      case 4:
+        return AccountPage();
+      default:
+        return HomePage();
+    }
   }
 }

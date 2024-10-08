@@ -76,7 +76,7 @@ class FriendSearchDelegate extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     // Hiển thị gợi ý tìm kiếm khi người dùng nhập liệu
-    return Center(
+    return const Center(
       child: Text('Search for friends by email or username.'),
     );
   }

@@ -6,11 +6,28 @@ import 'package:fuzzysnap/widget/setting_widget.dart';
 import 'package:provider/provider.dart';
 
 class SettingPage extends StatefulWidget {
+  const SettingPage({super.key});
+
   @override
   _SettingPageState createState() => _SettingPageState();
 }
 
 class _SettingPageState extends State<SettingPage> {
+
+  void signUserOut(BuildContext context) {
+      FirebaseAuth.instance.signOut().then((_) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+              '/auth_page',
+              (route) => false,
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error signing out: ${error.toString()}')),
+        );
+      });
+    }
+
   // bool isDarkMode = false;
   bool isNotification = false;
 
@@ -54,7 +71,7 @@ class _SettingPageState extends State<SettingPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ChangePasswordPage()),
+                          builder: (context) => const ChangePasswordPage()),
                     );
                   }),
                 ],
@@ -110,9 +127,7 @@ class _SettingPageState extends State<SettingPage> {
                     'Log out',
                     trailing: const Icon(Icons.logout),
                     onTap: () {
-                      Navigator.pop(context);
-
-                      FirebaseAuth.instance.signOut();
+                      signUserOut(context);
                     },
                   ),
                   buildSettingItem(

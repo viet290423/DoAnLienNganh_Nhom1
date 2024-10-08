@@ -12,6 +12,7 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final emailController = TextEditingController();
 
+  @override
   void dispose() {
     emailController.dispose();
     super.dispose();
@@ -24,7 +25,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               content: Text("Password reset link was sent! Check your email"),
             );
           });
@@ -46,7 +47,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         appBar: AppBar(),
         body: Column(
           children: [
-            Text("Vui long nhap email cua ban va chung toi se gui link"),
+            const Text("Vui long nhap email cua ban va chung toi se gui link"),
             const SizedBox(
               height: 30,
             ),
@@ -58,11 +59,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               onPressed: () {
                 passwordReset();
               },
+              color: Colors.black,
               child: Text(
                 "Reset password",
                 style: TextStyle(color: Colors.orange),
               ),
-              color: Colors.black,
             )
           ],
         ));

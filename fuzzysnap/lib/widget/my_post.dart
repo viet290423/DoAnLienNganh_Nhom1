@@ -63,7 +63,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
 
   Widget _buildPostContent(
       BuildContext context, Map<String, dynamic>? user, String formattedTime) {
-    void _removePost() async {
+    void removePost() async {
       try {
         await FirebaseFirestore.instance
             .collection('Posts')
@@ -84,7 +84,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         width: double.infinity,
         height: double.infinity,
@@ -173,7 +173,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                         print("Edit selected");
                       } else if (value == 'Remove') {
                         // Xử lý khi chọn Remove (xóa bài post)
-                        _removePost(); // Gọi hàm để xóa post
+                        removePost(); // Gọi hàm để xóa post
                       }
                     },
                     itemBuilder: (context) => [

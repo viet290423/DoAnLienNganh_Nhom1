@@ -75,6 +75,7 @@ class _CameraPageState extends State<CameraPage> {
     cameraValue = cameraController.initialize();
   }
 
+  @override
   void initState() {
     startCamera(0);
     super.initState();

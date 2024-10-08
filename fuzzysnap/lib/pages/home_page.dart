@@ -1,5 +1,4 @@
   import 'package:cloud_firestore/cloud_firestore.dart';
-  import 'package:firebase_auth/firebase_auth.dart';
   import 'package:flutter/material.dart';
   import 'package:fuzzysnap/database/firestore.dart';
   import 'package:fuzzysnap/widget/my_post.dart';
@@ -18,21 +17,6 @@ import 'package:fuzzysnap/widget/search_friend_widget.dart';
           .doc(userEmail)
           .snapshots();
     }
-
-    void signUserOut(BuildContext context) {
-      FirebaseAuth.instance.signOut().then((_) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-              '/auth_page',
-              (route) => false,
-        );
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error signing out: ${error.toString()}')),
-        );
-      });
-    }
-
 
     @override
     Widget build(BuildContext context) {
@@ -54,7 +38,7 @@ import 'package:fuzzysnap/widget/search_friend_widget.dart';
           forceMaterialTransparency: true,
           centerTitle: false,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: Padding(
+          title: const Padding(
             padding: EdgeInsets.only(left: 30),
             child: Text(
               'FUZZYSNAP',
@@ -124,7 +108,7 @@ import 'package:fuzzysnap/widget/search_friend_widget.dart';
                     } else if (snapshot.hasError) {
                       return ListTile(
                         title: Text(message),
-                        subtitle: Text('Error loading username'),
+                        subtitle: const Text('Error loading username'),
                       );
                     } else if (snapshot.hasData) {
                       // Check if the document exists and has data
@@ -144,13 +128,13 @@ import 'package:fuzzysnap/widget/search_friend_widget.dart';
                       } else {
                         return ListTile(
                           title: Text(message),
-                          subtitle: Text('Username not found'),
+                          subtitle: const Text('Username not found'),
                         );
                       }
                     } else {
                       return ListTile(
                         title: Text(message),
-                        subtitle: Text('Username not available'),
+                        subtitle: const Text('Username not available'),
                       );
                     }
                   },

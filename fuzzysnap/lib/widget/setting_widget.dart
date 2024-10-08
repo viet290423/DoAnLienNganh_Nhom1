@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget buildSettingSection({required Color color,required String title, required List<Widget> children}) {
   return Container(
-    padding: EdgeInsets.all(16),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(10),
@@ -11,7 +11,7 @@ Widget buildSettingSection({required Color color,required String title, required
           color: Colors.grey.withOpacity(0.2),
           spreadRadius: 1,
           blurRadius: 7,
-          offset: Offset(0, 3),
+          offset: const Offset(0, 3),
         ),
       ],
     ),
@@ -20,9 +20,9 @@ Widget buildSettingSection({required Color color,required String title, required
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         ...children,
       ],
     ),
@@ -39,7 +39,7 @@ Widget buildSettingItem(String text, {Widget? trailing, Color textColor = Colors
         children: [
           Text(
             text,
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
           if (trailing != null) trailing,
         ],

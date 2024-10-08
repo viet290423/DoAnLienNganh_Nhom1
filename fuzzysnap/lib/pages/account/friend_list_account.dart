@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FriendListPage extends StatefulWidget {
+  const FriendListPage({super.key});
+
   @override
   _FriendListPageState createState() => _FriendListPageState();
 }
@@ -53,13 +55,13 @@ class _FriendListPageState extends State<FriendListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Danh sách bạn bè')),
+      appBar: AppBar(title: const Text('Danh sách bạn bè')),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())  // Hiển thị vòng xoay khi đang tải dữ liệu
+          ? const Center(child: CircularProgressIndicator())  // Hiển thị vòng xoay khi đang tải dữ liệu
           : errorMessage != null
               ? Center(child: Text(errorMessage!))  // Hiển thị lỗi nếu có
               : friendsList.isEmpty
-                  ? Center(child: Text('Chưa có bạn bè nào.'))
+                  ? const Center(child: Text('Chưa có bạn bè nào.'))
                   : ListView.builder(
                       itemCount: friendsList.length,
                       itemBuilder: (context, index) {

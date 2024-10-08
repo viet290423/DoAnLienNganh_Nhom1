@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/addFriend/friend_equests.dart';
 
 class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
+
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
@@ -37,10 +39,10 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thông báo'),
+        title: const Text('Thông báo'),
       ),
       body: friendRequests.isEmpty
-          ? Center(child: Text('Không có yêu cầu kết bạn.'))
+          ? const Center(child: Text('Không có yêu cầu kết bạn.'))
           : ListView.builder(
               itemCount: friendRequests.length,
               itemBuilder: (context, index) {
@@ -55,11 +57,11 @@ class _NotificationPageState extends State<NotificationPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.check, color: Colors.green),
+                        icon: const Icon(Icons.check, color: Colors.green),
                         onPressed: () => _acceptFriendRequest(request),
                       ),
                       IconButton(
-                        icon: Icon(Icons.clear, color: Colors.red),
+                        icon: const Icon(Icons.clear, color: Colors.red),
                         onPressed: () => _declineFriendRequest(request),
                       ),
                     ],

@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': userCredential.user!.email,
         'username': usernameController.text,
       });
-    } 
+    }
   }
 
   //wrong email message popup
@@ -127,32 +127,44 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                MyTextField(
-                    controller: usernameController,
-                    hintText: "Username",
-                    obscureText: false),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: usernameController,
+                      hintText: "Username",
+                      obscureText: false),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
-                MyTextField(
-                    controller: emailController,
-                    hintText: "Email",
-                    obscureText: false),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: emailController,
+                      hintText: "Email",
+                      obscureText: false),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
-                MyTextField(
-                    controller: passwordController,
-                    hintText: "Password",
-                    obscureText: true),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      obscureText: true),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
                 //confirm password
-                MyTextField(
-                    controller: confirmPasswordController,
-                    hintText: "Confirm password",
-                    obscureText: true),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: MyTextField(
+                      controller: confirmPasswordController,
+                      hintText: "Confirm password",
+                      obscureText: true),
+                ),
                 const SizedBox(
                   height: 10,
                 ),

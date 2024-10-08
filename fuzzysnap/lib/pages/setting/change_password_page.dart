@@ -140,10 +140,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   );
                 }
               },
-              child: const Text(
-                'Change Password',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -151,6 +147,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 minimumSize: const Size(double.infinity, 56),
+              ),
+              child: const Text(
+                'Change Password',
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           ],
