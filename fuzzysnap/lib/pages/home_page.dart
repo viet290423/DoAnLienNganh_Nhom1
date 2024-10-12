@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
                 showSearch(
                   context: context,
                   delegate:
-                      FriendSearchDelegate(), // Sử dụng lớp FriendSearchDelegate
+                      FriendSearchDelegate(),
                 );
               },
             ),
@@ -55,17 +55,15 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: database.getPostsStream(),
+      body: StreamBuilder<List<DocumentSnapshot>>(
+        stream: database.getAllPostsStream(),
         builder: (context, snapshot) {
-          // show loading circle
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          // Handle error case
           if (snapshot.hasError) {
             return const Center(
               child: Padding(
@@ -75,8 +73,7 @@ class HomePage extends StatelessWidget {
             );
           }
 
-          // Handle empty data case
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(25),
@@ -85,25 +82,21 @@ class HomePage extends StatelessWidget {
             );
           }
 
-          // get all posts
-          final posts = snapshot.data!.docs;
+          final posts = snapshot.data!;
 
           // return as a list
           return PageView.builder(
             scrollDirection: Axis.vertical,
             itemCount: posts.length,
             itemBuilder: (context, index) {
-              // Get each individual post
               final post = posts[index].data() as Map<String, dynamic>;
 
-              // Check and assign values with default if necessary
               String imageUrl = post['ImageUrl'] ?? '';
               String message = post['PostMessage'] ?? 'No message';
               String userEmail = post['UserEmail'] ?? 'Unknown';
               String id = post['PostId'] ?? '';
               Timestamp timestamp = post['TimeStamp'] ?? Timestamp.now();
 
-              // Truy vấn collection User để lấy username
               return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                 stream: getUserStream(userEmail),
                 builder: (context, snapshot) {
@@ -115,12 +108,10 @@ class HomePage extends StatelessWidget {
                       subtitle: const Text('Error loading username'),
                     );
                   } else if (snapshot.hasData) {
-                    // Check if the document exists and has data
                     if (snapshot.data!.exists) {
                       Map<String, dynamic> userData = snapshot.data!.data()!;
                       String userName = userData['username'] ?? 'Unknown';
 
-                      // Truyền userName và các thông tin khác vao MyPost
                       return MyPost(
                         title: message,
                         userEmail: userEmail,

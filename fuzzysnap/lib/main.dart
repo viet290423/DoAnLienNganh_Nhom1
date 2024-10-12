@@ -29,40 +29,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context)=>UiProvider()..init(),
-      child: Consumer<UiProvider>(
-        builder: (context, UiProvider notifier, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
+      create: (BuildContext context) => UiProvider()..init(),
+      child:
+          Consumer<UiProvider>(builder: (context, UiProvider notifier, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
 
-            themeMode: notifier.isDark? ThemeMode.dark : ThemeMode.light,
+          themeMode: notifier.isDark ? ThemeMode.dark : ThemeMode.light,
 
-            //Our custom theme applied
-            darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
+          //Our custom theme applied
+          darkTheme: notifier.isDark ? notifier.darkTheme : notifier.lightTheme,
 
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
-                primary: Colors.black,
-                secondary: Colors.black,
-                onPrimary: Colors.white,
-                onSecondary: Colors.black,
-              ),
-              useMaterial3: true,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              surface: Colors.white,
+              primary: Colors.black,
+              secondary: Colors.black,
+              onPrimary: Colors.white,
+              onSecondary: Colors.black,
             ),
-            home: AuthPage(cameras: cameras),
-            routes: {
-              '/auth_page' : (context) => AuthPage(cameras: cameras),
-              '/login_register_page': (context) => const LoginOrRegisterPage(),
-              '/main_page' : (context) => MainPage(cameras: cameras,),
-              '/home_page' : (context) => HomePage(),
-              '/notification_page' : (context) => NotificationPage(),
-              '/camera_page' : (context) => CameraPage(cameras: cameras,),
-              '/chat_page' : (context) => const ChatPage(),
-            },
-          );
-        }
-      ),
+            useMaterial3: true,
+          ),
+          home: AuthPage(cameras: cameras),
+          routes: {
+            '/auth_page': (context) => AuthPage(cameras: cameras),
+            '/login_register_page': (context) => const LoginOrRegisterPage(),
+            '/main_page': (context) => MainPage(
+                  cameras: cameras,
+                ),
+            '/home_page': (context) => HomePage(),
+            '/notification_page': (context) => const NotificationPage(),
+            '/camera_page': (context) => CameraPage(
+                  cameras: cameras,
+                ),
+            '/chat_page': (context) => const ChatPage(),
+          },
+        );
+      }),
     );
   }
 }

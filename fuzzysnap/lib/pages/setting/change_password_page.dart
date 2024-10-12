@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/auth/auth_page.dart';
-import 'package:fuzzysnap/auth/login_or_register_page.dart';
 import 'package:fuzzysnap/widget/my_textfield.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -14,7 +12,8 @@ class ChangePasswordPage extends StatefulWidget {
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   var auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser;
@@ -24,12 +23,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   // }
 
   // Hàm thay đổi mật khẩu
-  Future<void> changePassword({required String oldPassword, required String newPassword}) async {
+  Future<void> changePassword(
+      {required String oldPassword, required String newPassword}) async {
     try {
       var email = currentUser!.email;
 
       // Xác thực lại người dùng với mật khẩu cũ
-      var cred = EmailAuthProvider.credential(email: email!, password: oldPassword);
+      var cred =
+          EmailAuthProvider.credential(email: email!, password: oldPassword);
       await currentUser!.reauthenticateWithCredential(cred);
 
       // Cập nhật mật khẩu mới
@@ -40,7 +41,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
       // Hiển thị thông báo thành công
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password changed successfully. Please login again.')),
+        const SnackBar(
+            content:
+                Text('Password changed successfully. Please login again.')),
       );
       // Đăng xuất và điều hướng về trang đăng nhập
       await auth.signOut();
@@ -49,7 +52,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/auth_page',
-            (route) => false,
+        (route) => false,
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -74,10 +77,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        // backgroundColor: Theme.of(context).colorScheme.surface,
-        // foregroundColor: Theme.of(context).colorScheme.surface,
       ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -93,9 +94,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             const SizedBox(height: 10),
             MyTextField(
-              controller: _oldPasswordController,
-              hintText: 'Enter old password',
-              obscureText: true),
+                controller: _oldPasswordController,
+                hintText: 'Enter old password',
+                obscureText: true),
             const SizedBox(height: 20),
             Text(
               'New Password',
@@ -107,9 +108,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             const SizedBox(height: 10),
             MyTextField(
-              controller: _newPasswordController,
-              hintText: 'Enter new password',
-              obscureText: true),
+                controller: _newPasswordController,
+                hintText: 'Enter new password',
+                obscureText: true),
             const SizedBox(height: 20),
             Text(
               'Confirm Password',

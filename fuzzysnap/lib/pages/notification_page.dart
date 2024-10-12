@@ -19,7 +19,8 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Future<void> _loadFriendRequests() async {
-    List<Map<String, dynamic>> requests = await friendRequestsService.getFriendRequests();
+    List<Map<String, dynamic>> requests =
+        await friendRequestsService.getFriendRequests();
     setState(() {
       friendRequests = requests;
     });
@@ -38,8 +39,20 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Thông báo'),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: const Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text(
+            'Notifications',
+            style: TextStyle(
+              fontSize: 20,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
       ),
       body: friendRequests.isEmpty
           ? const Center(child: Text('Không có yêu cầu kết bạn.'))
@@ -49,7 +62,8 @@ class _NotificationPageState extends State<NotificationPage> {
                 Map<String, dynamic> request = friendRequests[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(request['profile_image'] ?? 'default_profile_image_url'),
+                    backgroundImage: NetworkImage(request['profile_image'] ??
+                        'default_profile_image_url'),
                   ),
                   title: Text(request['username'] ?? 'Unknown'),
                   subtitle: Text(request['email'] ?? ''),

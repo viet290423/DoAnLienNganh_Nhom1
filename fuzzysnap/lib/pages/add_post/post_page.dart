@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/database/firestore.dart';
-import 'package:fuzzysnap/widget/my_button.dart';
 import 'package:fuzzysnap/widget/my_textfield.dart';
 
 class PostPage extends StatefulWidget {
@@ -39,6 +38,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Post Your Image'),
       ),

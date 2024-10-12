@@ -1,7 +1,6 @@
 import 'dart:io';
 // import 'dart:js_interop';
 import 'package:camera/camera.dart';
-import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/add_post/post_page.dart';
 import 'package:path_provider/path_provider.dart';
@@ -84,13 +83,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: const FloatingActionButton(
-      //   backgroundColor: Color.fromRGBO(255, 255, 255, 7),
-      //   onPressed: null,
-      //   shape: CircleBorder(),
-      //   child: Icon(Icons.camera_alt_rounded, size: 40,),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         forceMaterialTransparency: true,
         foregroundColor: Colors.black,

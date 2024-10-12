@@ -80,14 +80,14 @@ class _MainPageState extends State<MainPage> {
       case 0:
         return HomePage();
       case 1:
-        return NotificationPage();
+        return const NotificationPage();
       case 2:
         return CameraPage(
             cameras: widget.cameras); // Truyền cameras cho CameraPage
       case 3:
         return const ChatPage();
       case 4:
-        return AccountPage();
+        return const AccountPage();
       default:
         return HomePage();
     }

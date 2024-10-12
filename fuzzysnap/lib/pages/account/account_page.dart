@@ -148,9 +148,10 @@ class _AccountPageState extends State<AccountPage> {
   Future<int> _getPostCount() async {
     try {
       final querySnapshot = await FirebaseFirestore.instance
+          .collection('UserPosts')
+          .doc(currentUser!.email)
           .collection('Posts')
-          .where('UserEmail', isEqualTo: currentUser!.email)
-          .get();
+          .get(); // Query the subcollection for the user's posts
       return querySnapshot.size;
     } catch (e) {
       print("Error getting post count: $e");
@@ -230,7 +231,7 @@ class _AccountPageState extends State<AccountPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SettingPage()));
+                                    builder: (context) => const SettingPage()));
                           },
                         ),
                       ],
@@ -276,7 +277,7 @@ class _AccountPageState extends State<AccountPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FriendListPage()),
+                                      builder: (context) => const FriendListPage()),
                                 );
                               },
                               child: Column(
@@ -303,8 +304,9 @@ class _AccountPageState extends State<AccountPage> {
                   Expanded(
                     child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
+                          .collection('UserPosts')
+                          .doc(currentUser!.email)
                           .collection('Posts')
-                          .where('UserEmail', isEqualTo: currentUser!.email)
                           .orderBy('TimeStamp', descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
@@ -337,18 +339,12 @@ class _AccountPageState extends State<AccountPage> {
                             itemCount: posts.length,
                             itemBuilder: (context, index) {
                               var post = posts[index];
-                              var imageUrl = post['ImageUrl'];
+                              var imageUrl = post[
+                                  'ImageUrl']; // Assuming each post has an 'ImageUrl'
 
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => HomePage(
-                                  //       postId: post['PostId'],
-                                  //     ),
-                                  //   ),
-                                  // );
+                                  // Handle post click if needed
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),

@@ -60,7 +60,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 passwordReset();
               },
               color: Colors.black,
-              child: Text(
+              child: const Text(
                 "Reset password",
                 style: TextStyle(color: Colors.orange),
               ),

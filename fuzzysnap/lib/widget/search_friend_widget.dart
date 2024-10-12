@@ -1,7 +1,7 @@
 // Delegate để tìm kiếm bạn bè
 
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/pages/searchFriend/search_friend.dart';
+import 'package:fuzzysnap/service/search_friend_service.dart';
 
 class FriendSearchDelegate extends SearchDelegate {
   final SearchFriendService _searchFriendService = SearchFriendService();
