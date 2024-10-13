@@ -19,7 +19,7 @@ class _SettingPageState extends State<SettingPage> {
     FirebaseAuth.instance.signOut().then((_) {
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/auth_page',
+        '/',
         (route) => false,
       );
     }).catchError((error) {

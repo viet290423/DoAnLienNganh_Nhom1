@@ -17,10 +17,14 @@ class UiProvider extends ChangeNotifier{
           secondary: Colors.grey[850]!,
           onSecondary: Colors.white
       ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Color(0xFF6D9886), // Màu cho CircularProgressIndicator
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: Colors.white),
-      )
+      ),
+
   );
 
   //Custom light theme

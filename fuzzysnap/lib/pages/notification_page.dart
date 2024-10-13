@@ -55,7 +55,11 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       body: friendRequests.isEmpty
-          ? const Center(child: Text('Không có yêu cầu kết bạn.'))
+          ? const Center(
+              child: Text(
+              'Nothing here!',
+              style: TextStyle(fontSize: 22),
+            ))
           : ListView.builder(
               itemCount: friendRequests.length,
               itemBuilder: (context, index) {

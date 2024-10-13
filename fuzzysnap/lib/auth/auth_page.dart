@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/auth/login_or_register_page.dart';
 import 'package:fuzzysnap/pages/main_page.dart';
+import 'package:fuzzysnap/pages/splash/welcome_page.dart';
 
 class AuthPage extends StatelessWidget {
   final List<CameraDescription> cameras; // Thêm biến cameras
@@ -16,9 +17,9 @@ class AuthPage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return MainPage(cameras: cameras); // Truyền cameras vào MainPage
+            return MainPage(cameras: cameras);
           } else {
-            return const LoginOrRegisterPage();
+            return LoginOrRegisterPage();
           }
         },
       ),

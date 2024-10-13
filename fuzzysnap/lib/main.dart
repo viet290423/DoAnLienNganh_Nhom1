@@ -9,6 +9,7 @@ import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/main_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
+import 'package:fuzzysnap/pages/splash/splash_page.dart';
 import 'package:fuzzysnap/provider/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
 
           //Our custom theme applied
           darkTheme: notifier.isDark ? notifier.darkTheme : notifier.lightTheme,
-
+    
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple,
@@ -49,10 +50,14 @@ class MyApp extends StatelessWidget {
               onPrimary: Colors.white,
               onSecondary: Colors.black,
             ),
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+                color: Color(0xFF6D9886) // Màu cho CircularProgressIndicator
+                ),
             useMaterial3: true,
           ),
-          home: AuthPage(cameras: cameras),
+          initialRoute: '/',
           routes: {
+            '/': (context) => SplashScreen(),
             '/auth_page': (context) => AuthPage(cameras: cameras),
             '/login_register_page': (context) => const LoginOrRegisterPage(),
             '/main_page': (context) => MainPage(
