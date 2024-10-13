@@ -59,12 +59,20 @@ class FriendSearchDelegate extends SearchDelegate {
               ),
               title: Text(user['username']), // Hiển thị username
               trailing: IconButton(
-                icon: const Icon(Icons.person_add), // Nút thêm bạn
+                icon: Icon(
+                  user['isFriend'] ? Icons.person : Icons.person_add, // Kiểm tra trạng thái kết bạn
+                ),
                 onPressed: () {
-                  _searchFriendService.sendFriendRequest(user['uid']); // Gửi yêu cầu kết bạn
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Friend request sent to ${user['username']}.')),
-                  );
+                  if (!user['isFriend']) {
+                    _searchFriendService.sendFriendRequest(user['uid']); // Gửi yêu cầu kết bạn
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Friend request sent to ${user['username']}.')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${user['username']} is already your friend.')),
+                    );
+                  }
                 },
               ),
             );
