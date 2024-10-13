@@ -86,7 +86,7 @@ class _CameraPageState extends State<CameraPage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         forceMaterialTransparency: true,
-        foregroundColor: Colors.black,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         centerTitle: true,
         title: const Text(
           "TAKE GREAT PICTURE",

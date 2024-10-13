@@ -110,165 +110,167 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            top: 20,
-            right: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: user?['profile_image'] != null
-                                ? NetworkImage(user!['profile_image'])
-                                : null,
-                            child: user?['profile_image'] == null
-                                ? const Icon(Icons.person, size: 32)
-                                : null,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            // height: 24,
-                            child: Text(
-                              widget.userName,
-                              style: const TextStyle(
-                                // color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w700,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 20,
+              top: 20,
+              right: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: user?['profile_image'] != null
+                                  ? NetworkImage(user!['profile_image'])
+                                  : null,
+                              child: user?['profile_image'] == null
+                                  ? const Icon(Icons.person, size: 32)
+                                  : null,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              // height: 24,
+                              child: Text(
+                                widget.userName,
+                                style: const TextStyle(
+                                  // color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            // height: 20,
-                            child: Text(
-                              formattedTime, // Display the formatted timestamp here
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w400,
+                            SizedBox(
+                              // height: 20,
+                              child: Text(
+                                formattedTime, // Display the formatted timestamp here
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  PopupMenuButton<String>(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                          ],
+                        ),
+                      ],
                     ),
-                    onSelected: (value) {
-                      if (value == 'Edit') {
-                        // Xử lý khi chọn Edit (điều hướng tới trang chỉnh sửa chẳng hạn)
-                        print("Edit selected");
-                      } else if (value == 'Remove') {
-                        // Xử lý khi chọn Remove (xóa bài post)
-                        removePost(widget.postId); // Gọi hàm để xóa post
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'Edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit, color: Colors.blue),
-                            SizedBox(width: 10),
-                            Text(
-                              'Edit',
-                              style: TextStyle(
-                                // color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
+                    PopupMenuButton<String>(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const PopupMenuItem(
-                        value: 'Remove',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete_outline, color: Colors.red),
-                            SizedBox(width: 10),
-                            Text(
-                              'Remove',
-                              style: TextStyle(
-                                // color: Colors.black,
-                                fontSize: 16,
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          // Xử lý khi chọn Edit (điều hướng tới trang chỉnh sửa chẳng hạn)
+                          print("Edit selected");
+                        } else if (value == 'Remove') {
+                          // Xử lý khi chọn Remove (xóa bài post)
+                          removePost(widget.postId); // Gọi hàm để xóa post
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'Edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, color: Colors.blue),
+                              SizedBox(width: 10),
+                              Text(
+                                'Edit',
+                                style: TextStyle(
+                                  // color: Colors.black,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const PopupMenuItem(
+                          value: 'Remove',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete_outline, color: Colors.red),
+                              SizedBox(width: 10),
+                              Text(
+                                'Remove',
+                                style: TextStyle(
+                                  // color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      icon: Icon(Icons.more_vert, color: Colors.grey[700]),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onDoubleTap: () {
+                    _isFavoriteNotifier.value = !_isFavoriteNotifier.value;
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height / 2,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(widget.imageUrl),
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                    icon: Icon(Icons.more_vert, color: Colors.grey[700]),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onDoubleTap: () {
-                  _isFavoriteNotifier.value = !_isFavoriteNotifier.value;
-                },
-                child: Container(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height / 2,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(widget.imageUrl),
-                      fit: BoxFit.cover,
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                      // color: Colors.black,
+                      fontSize: 15,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
                     ),
-                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(
-                    // color: Colors.black,
-                    fontSize: 15,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    LikeButton(
+                      isFavoriteNotifier: _isFavoriteNotifier,
+                      onFavoriteChanged: (newValue) {
+                        // Cập nhật trạng thái yêu thích ở đây
+                        // Bạn có thể thêm logic lưu vào Firestore hoặc các hành động khác
+                      },
+                    ),
+                    _buildCommentButton(),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  LikeButton(
-                    isFavoriteNotifier: _isFavoriteNotifier,
-                    onFavoriteChanged: (newValue) {
-                      // Cập nhật trạng thái yêu thích ở đây
-                      // Bạn có thể thêm logic lưu vào Firestore hoặc các hành động khác
-                    },
-                  ),
-                  _buildCommentButton(),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -277,7 +279,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
 
   Widget _buildCommentButton() {
     return IconButton(
-      icon: Icon(
+      icon: const Icon(
         CupertinoIcons.chat_bubble,
         size: 30,
       ),

@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
@@ -26,7 +25,19 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: _buildPage(_currentIndex), // Load lại page mỗi khi đổi tab
       bottomNavigationBar: Container(
-        color: Theme.of(context).colorScheme.onPrimary,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onPrimary,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black
+                  .withOpacity(0.1), // Màu và độ trong suốt của shadow
+              spreadRadius: 2, // Bán kính mở rộng
+              blurRadius: 10, // Độ mờ của shadow
+              offset:
+                  const Offset(0, -2), // Hướng của shadow (ở trên - y là số âm)
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: GNav(
@@ -74,7 +85,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // Hàm này trả về trang tương ứng với chỉ số
   Widget _buildPage(int index) {
     switch (index) {
       case 0:

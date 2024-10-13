@@ -226,7 +226,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                   fontWeight: FontWeight.w400,
                   color: Theme.of(context).colorScheme.onSecondary,
                 ),
-                prefixIcon: Icon(CupertinoIcons.chat_bubble),
+                prefixIcon: const Icon(CupertinoIcons.chat_bubble),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
