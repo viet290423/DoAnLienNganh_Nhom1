@@ -48,7 +48,24 @@ class AddFriendService {
           .collection('FriendRequests')
           .doc(recipientEmail);
 
-      // Cập nhật hoặc thêm mới yêu cầu kết bạn vào mảng yêu cầu kết bạn của người nhận
+      // Lấy dữ liệu hiện tại của người nhận
+      DocumentSnapshot recipientSnapshot = await recipientDoc.get();
+
+      if (recipientSnapshot.exists) {
+        // Lấy mảng 'requests' từ dữ liệu người nhận
+        List<dynamic> requests = (recipientSnapshot.data() as Map<String, dynamic>?)?['requests'] ?? [];
+
+        // Kiểm tra xem người gửi đã tồn tại trong danh sách yêu cầu chưa
+        bool alreadyRequested = requests.any((request) => request['email'] == senderEmail);
+
+        if (alreadyRequested) {
+          debugPrint('Yêu cầu kết bạn đã được gửi trước đó.');
+          
+          return;
+        }
+      }
+
+      // Nếu chưa gửi yêu cầu, cập nhật hoặc thêm mới yêu cầu kết bạn vào mảng yêu cầu kết bạn của người nhận
       await recipientDoc.update({
         'requests': FieldValue.arrayUnion([senderInfo]) // Thêm thông tin người gửi vào mảng 'requests'
       }).catchError((error) async {
