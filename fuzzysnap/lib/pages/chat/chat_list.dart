@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,18 +22,19 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text('Danh sách trò chuyện'),
+        title: const Text('Danh sách trò chuyện'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('chatBox').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Lỗi khi tải dữ liệu'));
+            return const Center(child: Text('Lỗi khi tải dữ liệu'));
           }
 
           final chatBoxes = snapshot.data!.docs;
@@ -48,7 +48,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           }).toList();
 
           if (currentUserChatBoxes.isEmpty) {
-            return Center(child: Text('Không có cuộc trò chuyện nào.'));
+            return const Center(child: Text('Không có cuộc trò chuyện nào.'));
           }
 
           return ListView.builder(
@@ -74,13 +74,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 builder: (context, friendSnapshot) {
                   if (friendSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return ListTile(title: CircularProgressIndicator());
+                    return LinearProgressIndicator();
                   }
 
                   if (friendSnapshot.hasError ||
                       !friendSnapshot.hasData ||
                       friendSnapshot.data!.docs.isEmpty) {
-                    return ListTile(
+                    return const ListTile(
                         title: Text('Lỗi khi lấy thông tin người dùng'));
                   }
 
@@ -89,7 +89,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                   // Kiểm tra xem friendData có null không
                   if (friendData == null) {
-                    return ListTile(
+                    return const ListTile(
                         title: Text('Không tìm thấy thông tin người dùng'));
                   }
 
