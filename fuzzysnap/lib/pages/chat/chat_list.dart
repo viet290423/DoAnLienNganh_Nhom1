@@ -24,7 +24,17 @@ class _ChatListScreenState extends State<ChatListScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Danh sách trò chuyện'),
+        title: const Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text(
+            'Messages',
+            style: TextStyle(
+              fontSize: 20,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('chatBox').snapshots(),

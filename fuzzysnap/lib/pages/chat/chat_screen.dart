@@ -180,10 +180,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
-                          margin:
-                              const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
                           padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                              vertical: 5, horizontal: 12),
                           decoration: BoxDecoration(
                             color: isSentByMe
                                 ? Colors.blue[300]
@@ -201,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   fontSize: 16,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 2),
                               Text(
                                 messageData['createdAt'] != null
                                     ? messageData['createdAt']
@@ -290,8 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                         border: InputBorder.none,
                       ),
-                      onSubmitted: (value) =>
-                          _sendMessage(), 
+                      onSubmitted: (value) => _sendMessage(),
                     ),
                   ),
                 ),
