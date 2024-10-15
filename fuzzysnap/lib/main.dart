@@ -5,8 +5,7 @@ import 'package:fuzzysnap/auth/auth_page.dart';
 import 'package:fuzzysnap/auth/login_or_register_page.dart';
 import 'package:fuzzysnap/firebase_options.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
-import 'package:fuzzysnap/pages/chat/chat_list.dart';
-import 'package:fuzzysnap/pages/chat/chat_screen.dart';
+import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/main_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
@@ -69,7 +68,7 @@ class MyApp extends StatelessWidget {
             '/camera_page': (context) => CameraPage(
                   cameras: cameras,
                 ),
-            '/chat_screen': (context) => ChatListScreen(),
+            '/chat_page': (context) => const ChatPage(),
           },
         );
       }),

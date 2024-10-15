@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/pages/chat/chat_screen.dart';
+import 'package:fuzzysnap/pages/chat/chat_page.dart';
 
 class FriendListPage extends StatefulWidget {
   const FriendListPage({super.key});
@@ -83,10 +83,7 @@ class _FriendListPageState extends State<FriendListPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
-                                    friendData: friend,
-                                    chatBoxId: '',
-                                  ),
+                                  builder: (context) => ChatPage()
                                 ),
                               );
                             },
