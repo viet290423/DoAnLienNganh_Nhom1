@@ -68,6 +68,7 @@ class FriendRequestsService {
       }
 
       Map<String, dynamic>? currentData = currentDoc.data();
+      String UID = currentData?['uid'] ?? '';
       String Display = currentData?['username'] ?? 'Unknown';
       String currentProfileImage = currentData?['profile_image'] ?? 'default_profile_image_url';
 
@@ -88,6 +89,7 @@ class FriendRequestsService {
           .update({
         'listFriend': FieldValue.arrayUnion([
           {
+            'uid': friendRequest['uid'], // UID của người bạn
             'email': friendRequest['email'], // email của người bạn
             'username': friendRequest['username'], // Tên người bạn
             'profile_image': friendRequest['profile_image'], // Ảnh đại diện của người bạn
@@ -103,6 +105,7 @@ class FriendRequestsService {
           .update({
         'listFriend': FieldValue.arrayUnion([
           {
+            'uid': UID, // UID của người dùng hiện tại
             'email': currentUserEmail, // email của người dùng hiện tại
             'username': Display, // Tên của người dùng hiện tại
             'profile_image': currentProfileImage, // Ảnh đại diện của người dùng hiện tại

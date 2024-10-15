@@ -30,6 +30,7 @@ class AddFriendService {
 
       // Lấy các thông tin của người gửi
       Map<String, dynamic>? senderData = senderDoc.data();
+      String senderUID = senderData?['uid'] ?? '';
       String senderUsername = senderData?['username'] ?? 'Unknown';
       String senderProfileImage = senderData?['profile_image'] ?? 'default_profile_image_url';
       String senderEmail = senderData?['email'] ?? '';
@@ -37,6 +38,7 @@ class AddFriendService {
 
       // Tạo map chứa thông tin người gửi
       Map<String, dynamic> senderInfo = {
+        'uid': senderUID,
         'username': senderUsername,
         'email': senderEmail,
         'profile_image': senderProfileImage,

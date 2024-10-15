@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/pages/chat/chat_screen.dart';
 
 class FriendListPage extends StatefulWidget {
   const FriendListPage({super.key});
@@ -12,8 +13,8 @@ class FriendListPage extends StatefulWidget {
 class _FriendListPageState extends State<FriendListPage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   List<Map<String, dynamic>> friendsList = [];
-  bool isLoading = true;  // Biến để kiểm soát trạng thái tải dữ liệu
-  String? errorMessage;   // Biến để lưu lỗi (nếu có)
+  bool isLoading = true; // Biến để kiểm soát trạng thái tải dữ liệu
+  String? errorMessage; // Biến để lưu lỗi (nếu có)
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _FriendListPageState extends State<FriendListPage> {
         List<dynamic> friends = userDoc.data()?['listFriend'] ?? [];
         setState(() {
           friendsList = friends.cast<Map<String, dynamic>>();
-          isLoading = false;  // Đã tải xong dữ liệu
+          isLoading = false; // Đã tải xong dữ liệu
         });
       } else {
         setState(() {
@@ -57,9 +58,11 @@ class _FriendListPageState extends State<FriendListPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Danh sách bạn bè')),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())  // Hiển thị vòng xoay khi đang tải dữ liệu
+          ? const Center(
+              child:
+                  CircularProgressIndicator()) // Hiển thị vòng xoay khi đang tải dữ liệu
           : errorMessage != null
-              ? Center(child: Text(errorMessage!))  // Hiển thị lỗi nếu có
+              ? Center(child: Text(errorMessage!)) // Hiển thị lỗi nếu có
               : friendsList.isEmpty
                   ? const Center(child: Text('Chưa có bạn bè nào.'))
                   : ListView.builder(
@@ -69,10 +72,25 @@ class _FriendListPageState extends State<FriendListPage> {
                         return ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(
-                                friend['profile_image'] ?? 'default_profile_image_url'),
+                                friend['profile_image'] ??
+                                    'default_profile_image_url'),
                           ),
                           title: Text(friend['username']),
                           subtitle: Text(friend['email']),
+                          trailing: IconButton(
+                            icon: Icon(Icons.chat),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                    friendData: friend,
+                                    chatBoxId: '',
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
