@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 
@@ -56,6 +57,7 @@ class _FriendListPageState extends State<FriendListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: const Text('Danh sách bạn bè')),
       body: isLoading
           ? const Center(
@@ -78,7 +80,7 @@ class _FriendListPageState extends State<FriendListPage> {
                           title: Text(friend['username']),
                           subtitle: Text(friend['email']),
                           trailing: IconButton(
-                            icon: Icon(Icons.chat),
+                            icon: const Icon(CupertinoIcons.chat_bubble),
                             onPressed: () {
                               Navigator.push(
                                 context,
