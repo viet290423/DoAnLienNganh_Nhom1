@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
+import 'package:fuzzysnap/pages/chat/chat_list.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
@@ -95,7 +96,7 @@ class _MainPageState extends State<MainPage> {
         return CameraPage(
             cameras: widget.cameras); // Truyền cameras cho CameraPage
       case 3:
-        return const ChatPage();
+        return ChatListScreen();
       case 4: 
         return const AccountPage();
       default:
