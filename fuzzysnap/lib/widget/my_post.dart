@@ -160,7 +160,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                             SizedBox(
                               // height: 20,
                               child: Text(
-                                formattedTime, // Display the formatted timestamp here
+                                formattedTime, 
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 12,

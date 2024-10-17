@@ -1,13 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fuzzysnap/service/chat_service.dart';
+
 class ChatPage extends StatefulWidget {
   final Map<String, dynamic> friendData;
   ChatPage({required this.friendData, required String chatBoxId});
   @override
   _ChatPageState createState() => _ChatPageState();
 }
+
 class _ChatPageState extends State<ChatPage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   final ChatService _chatService = ChatService();
@@ -20,6 +23,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _initializeChatBox();
   }
+
   // Hàm khởi tạo hộp chat
   Future<void> _initializeChatBox() async {
     if (currentUser != null) {
@@ -50,6 +54,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     }
   }
+
   // Hàm gửi tin nhắn
   void _sendMessage() {
     if (messageController.text.isNotEmpty && chatBoxId != null) {
@@ -73,19 +78,22 @@ class _ChatPageState extends State<ChatPage> {
       _scrollToBottom();
     }
   }
+
   // Hàm cuộn đến cuối danh sách tin nhắn
   void _scrollToBottom() {
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: Row(
           children: [
             CircleAvatar(
@@ -95,11 +103,11 @@ class _ChatPageState extends State<ChatPage> {
                     'default_profile_image_url',
               ),
             ),
-            SizedBox(width: 15),
+            const SizedBox(width: 15),
             Expanded(
               child: Text(
                 widget.friendData['username'] ?? 'Người dùng',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -110,14 +118,14 @@ class _ChatPageState extends State<ChatPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.call),
+            icon: const Icon(Icons.call),
             iconSize: 26,
             onPressed: () {
               debugPrint("Gọi thoại");
             },
           ),
           IconButton(
-            icon: Icon(Icons.videocam),
+            icon: const Icon(Icons.videocam),
             iconSize: 26,
             onPressed: () {
               debugPrint("Gọi video");
@@ -136,7 +144,7 @@ class _ChatPageState extends State<ChatPage> {
                   : null,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData && snapshot.data!.exists) {
                   List<dynamic> messages = (snapshot.data!.data()
@@ -160,9 +168,9 @@ class _ChatPageState extends State<ChatPage> {
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                          padding: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 12),
                           decoration: BoxDecoration(
                             color: isSentByMe
@@ -181,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
                                   fontSize: 16,
                                 ),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
                                 messageData['createdAt'] != null
                                     ? messageData['createdAt']
@@ -203,7 +211,7 @@ class _ChatPageState extends State<ChatPage> {
                     },
                   );
                 }
-                return Center(child: Text("Không có tin nhắn nào."));
+                return const Center(child: Text("Không có tin nhắn nào."));
               },
             ),
           ),
@@ -226,12 +234,12 @@ class _ChatPageState extends State<ChatPage> {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 2,
                           blurRadius: 5,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.photo,
                         color: Colors.blueAccent,
                       ),
@@ -241,41 +249,51 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 // TextField với viền bo tròn và độ nổi
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.grey[300]!, width: 1),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: TextField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Nhập tin nhắn...',
-                        border: InputBorder.none,
+                  child: TextField(
+                    controller: messageController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.transparent,
+                      labelText: 'Type a message...',
+                      labelStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
-                      onSubmitted: (value) =>
-                          _sendMessage(), // Gửi tin nhắn khi nhấn Enter
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          width: 2.0,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 20),
                     ),
+                    onSubmitted: (value) =>
+                          _sendMessage(),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 // Nút gửi với hiệu ứng nổi
                 GestureDetector(
                   onTap: _sendMessage,
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.blue,
                       shape: BoxShape.circle,
@@ -284,11 +302,11 @@ class _ChatPageState extends State<ChatPage> {
                           color: Colors.blue.withOpacity(0.5),
                           spreadRadius: 2,
                           blurRadius: 5,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.send,
                       color: Colors.white,
                     ),

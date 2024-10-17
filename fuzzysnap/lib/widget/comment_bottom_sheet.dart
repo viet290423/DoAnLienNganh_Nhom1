@@ -199,7 +199,10 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
       leading: CircleAvatar(
         backgroundImage: NetworkImage(commentData['AvatarUrl']),
       ),
-      title: Text(commentData['UserName']),
+      title: Text(
+        commentData['UserName'],
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       subtitle: Text(displayedComment),
       trailing: Text(
         _formatTimestamp(commentData['CommentTime']),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/pages/account/friend_account_page.dart';
 
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 
@@ -86,13 +87,20 @@ class _FriendListPageState extends State<FriendListPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    friendData: friend,
-                                     chatBoxId: '',)
-                                ),
+                                    builder: (context) => ChatPage(
+                                          friendData: friend,
+                                          chatBoxId: '',
+                                        )),
                               );
                             },
                           ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FriendAccountPage(
+                                        friendEmail: friend['email'])));
+                          },
                         );
                       },
                     ),

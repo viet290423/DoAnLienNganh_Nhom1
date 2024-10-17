@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/pages/addFriend/add_friend.dart';
+import 'package:fuzzysnap/service/addFriend/add_friend_service.dart';
 
 // Lớp dịch vụ tìm kiếm bạn bè
 class SearchFriendService {

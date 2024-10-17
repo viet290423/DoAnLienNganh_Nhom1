@@ -115,26 +115,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Hàm để lưu username mới lên Firestore
-  Future<void> _saveChanges() async {
-    if (currentUser != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection("User")
-            .doc(currentUser!.email)
-            .update({'username': _usernameController.text});
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cập nhật tên người dùng thành công')),
-        );
-      } catch (e) {
-        print("Error saving username: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
-        );
-      }
-    }
-  }
-
   // Lấy thông tin người dùng từ Firestore
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserDetails() async {
     return await FirebaseFirestore.instance
@@ -276,7 +256,8 @@ class _AccountPageState extends State<AccountPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const FriendListPage()),
+                                      builder: (context) =>
+                                          const FriendListPage()),
                                 );
                               },
                               child: Column(

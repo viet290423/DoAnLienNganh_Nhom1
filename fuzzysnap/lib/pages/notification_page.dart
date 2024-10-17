@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzysnap/pages/addFriend/friend_requests.dart';
+import 'package:fuzzysnap/service/addFriend/friend_requests_service.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});

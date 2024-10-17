@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/database/firestore.dart';
 import 'package:fuzzysnap/widget/my_post.dart';
-import 'package:fuzzysnap/widget/search_friend_widget.dart';
+import 'package:fuzzysnap/pages/search_friend_page.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomePage extends StatelessWidget {
