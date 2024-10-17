@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 class ChatListPage extends StatefulWidget {
+  const ChatListPage({super.key});
+
   @override
   _ChatListPageState createState() => _ChatListPageState();
 }
@@ -18,17 +20,28 @@ class _ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text('Danh sách trò chuyện'),
+        title: const Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text(
+            'Messages',
+            style: TextStyle(
+              fontSize: 20,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('chatBox').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Lỗi khi tải dữ liệu'));
+            return const Center(child: Text('Lỗi khi tải dữ liệu'));
           }
           final chatBoxes = snapshot.data!.docs;
           // Lọc các cuộc trò chuyện chỉ cho người dùng hiện tại
@@ -39,7 +52,7 @@ class _ChatListPageState extends State<ChatListPage> {
             return senderUid == currentUserUid || receiverUid == currentUserUid;
           }).toList();
           if (currentUserChatBoxes.isEmpty) {
-            return Center(child: Text('Không có cuộc trò chuyện nào.'));
+            return const Center(child: Text('Không có cuộc trò chuyện nào.'));
           }
           return ListView.builder(
             itemCount: currentUserChatBoxes.length,
@@ -61,19 +74,19 @@ class _ChatListPageState extends State<ChatListPage> {
                 builder: (context, friendSnapshot) {
                   if (friendSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return ListTile(title: CircularProgressIndicator());
+                    return const LinearProgressIndicator();
                   }
                   if (friendSnapshot.hasError ||
                       !friendSnapshot.hasData ||
                       friendSnapshot.data!.docs.isEmpty) {
-                    return ListTile(
+                    return const ListTile(
                         title: Text('Lỗi khi lấy thông tin người dùng'));
                   }
                   final friendData = friendSnapshot.data!.docs.first.data()
                       as Map<String, dynamic>?;
                   // Kiểm tra xem friendData có null không
                   if (friendData == null) {
-                    return ListTile(
+                    return const ListTile(
                         title: Text('Không tìm thấy thông tin người dùng'));
                   }
                   final String username =

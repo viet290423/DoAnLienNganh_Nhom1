@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fuzzysnap/service/chat_service.dart';
-class ChatScreen extends StatefulWidget {
+class ChatPage extends StatefulWidget {
   final Map<String, dynamic> friendData;
-  ChatScreen({required this.friendData, required String chatBoxId});
+  ChatPage({required this.friendData, required String chatBoxId});
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatPageState createState() => _ChatPageState();
 }
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatPageState extends State<ChatPage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   final ChatService _chatService = ChatService();
   final TextEditingController messageController = TextEditingController();
@@ -84,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Row(
           children: [
@@ -162,7 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           margin:
                               EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                              vertical: 5, horizontal: 12),
                           decoration: BoxDecoration(
                             color: isSentByMe
                                 ? Colors.blue[300]
@@ -180,7 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   fontSize: 16,
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 2),
                               Text(
                                 messageData['createdAt'] != null
                                     ? messageData['createdAt']

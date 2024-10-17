@@ -86,7 +86,7 @@ class _FriendListPageState extends State<FriendListPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
+                                  builder: (context) => ChatPage(
                                     friendData: friend,
                                      chatBoxId: '',)
                                 ),
