@@ -100,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
               radius: 20,
               backgroundImage: NetworkImage(
                 widget.friendData['profile_image'] ??
-                    'default_profile_image_url',
+                    'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
               ),
             ),
             const SizedBox(width: 15),
