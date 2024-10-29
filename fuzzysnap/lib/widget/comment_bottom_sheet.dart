@@ -201,7 +201,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
       ),
       title: Text(
         commentData['UserName'],
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(displayedComment),
       trailing: Text(

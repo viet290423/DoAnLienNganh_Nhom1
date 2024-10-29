@@ -18,7 +18,7 @@ class _FriendAccountPageState extends State<FriendAccountPage> {
   int friendCount = 0;
 
   File? _selectedImage;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {

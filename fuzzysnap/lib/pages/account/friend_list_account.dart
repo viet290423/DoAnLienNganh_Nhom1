@@ -75,9 +75,15 @@ class _FriendListPageState extends State<FriendListPage> {
                         Map<String, dynamic> friend = friendsList[index];
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                friend['profile_image'] ??
-                                    'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
+                            // backgroundImage: NetworkImage(
+                            //     friend['profile_image'] ??
+                            //         'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
+                            backgroundImage: friend['profile_image'] != null
+                                ? NetworkImage(friend['profile_image'])
+                                : null,
+                            child: friend['profile_image'] == null
+                                ? const Icon(Icons.person, size: 32)
+                                : null,
                           ),
                           title: Text(friend['username']),
                           subtitle: Text(friend['email']),

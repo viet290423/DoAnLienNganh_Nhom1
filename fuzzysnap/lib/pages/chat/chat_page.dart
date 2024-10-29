@@ -6,7 +6,8 @@ import 'package:fuzzysnap/service/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
   final Map<String, dynamic> friendData;
-  ChatPage({required this.friendData, required String chatBoxId});
+  const ChatPage(
+      {super.key, required this.friendData, required String chatBoxId});
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -179,7 +180,7 @@ class _ChatPageState extends State<ChatPage> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
                                 messageData['message'],
@@ -284,8 +285,7 @@ class _ChatPageState extends State<ChatPage> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 14, horizontal: 20),
                     ),
-                    onSubmitted: (value) =>
-                          _sendMessage(),
+                    onSubmitted: (value) => _sendMessage(),
                   ),
                 ),
                 const SizedBox(width: 10),

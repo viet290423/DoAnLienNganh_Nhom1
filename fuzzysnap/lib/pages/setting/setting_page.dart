@@ -71,14 +71,14 @@ class _SettingPageState extends State<SettingPage> {
                       MaterialPageRoute(
                           builder: (context) => const ChangeInformation()),
                     );
-                  }),
+                  }, textColor: Colors.black),
                   buildSettingItem('Change Password', onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const ChangePasswordPage()),
                     );
-                  }),
+                  }, textColor: Colors.black),
                 ],
               ),
               const SizedBox(height: 20),
@@ -90,6 +90,7 @@ class _SettingPageState extends State<SettingPage> {
                     'Language',
                     trailing: const Text('English'),
                     onTap: () {},
+                    textColor: Colors.black,
                   ),
                   buildSettingItem(
                     'Dark Mode',
@@ -98,6 +99,7 @@ class _SettingPageState extends State<SettingPage> {
                         value: notifier.isDark,
                         onChanged: (value) => notifier.changeTheme()),
                     onTap: () {},
+                    textColor: Colors.black,
                   ),
                   buildSettingItem(
                     'Notification',
@@ -111,6 +113,7 @@ class _SettingPageState extends State<SettingPage> {
                       },
                     ),
                     onTap: () {},
+                    textColor: Colors.black,
                   ),
                 ],
               ),
@@ -119,8 +122,10 @@ class _SettingPageState extends State<SettingPage> {
                 color: Theme.of(context).colorScheme.onPrimary,
                 title: 'About us',
                 children: [
-                  buildSettingItem('Website', onTap: () {}),
-                  buildSettingItem('Help', onTap: () {}),
+                  buildSettingItem('Website',
+                      onTap: () {}, textColor: Colors.black),
+                  buildSettingItem('Help',
+                      onTap: () {}, textColor: Colors.black),
                 ],
               ),
               const SizedBox(height: 20),
@@ -134,6 +139,7 @@ class _SettingPageState extends State<SettingPage> {
                     onTap: () {
                       signUserOut(context);
                     },
+                    textColor: Colors.black,
                   ),
                   buildSettingItem(
                     'Delete account',

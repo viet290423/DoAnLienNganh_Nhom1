@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-Widget buildSettingSection({required Color color,required String title, required List<Widget> children}) {
+Widget buildSettingSection(
+    {required Color color,
+    required String title,
+    required List<Widget> children}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -29,7 +32,8 @@ Widget buildSettingSection({required Color color,required String title, required
   );
 }
 
-Widget buildSettingItem(String text, {Widget? trailing, Color textColor = Colors.black, required VoidCallback onTap}) {
+Widget buildSettingItem(String text,
+    {Widget? trailing, required Color textColor, required VoidCallback onTap}) {
   return GestureDetector(
     onTap: onTap,
     child: Padding(
@@ -39,7 +43,7 @@ Widget buildSettingItem(String text, {Widget? trailing, Color textColor = Colors
         children: [
           Text(
             text,
-            style: const TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 18, color: textColor),
           ),
           if (trailing != null) trailing,
         ],

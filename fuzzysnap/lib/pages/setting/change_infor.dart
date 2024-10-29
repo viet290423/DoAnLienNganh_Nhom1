@@ -45,12 +45,12 @@ class _ChangeInformationState extends State<ChangeInformation> {
             .doc(currentUser!.email)
             .update({'username': _usernameController.text});
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Cập nhật tên người dùng thành công')),
+          const SnackBar(content: Text('Cập nhật tên người dùng thành công')),
         );
       } catch (e) {
         print("Error saving username: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
+          const SnackBar(content: Text('Lỗi khi cập nhật tên người dùng')),
         );
       }
     }

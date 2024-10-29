@@ -47,7 +47,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 30,),
+            const SizedBox(height: 30,),
             const Text(
               'FuzzySnap',
               textAlign: TextAlign.center,
@@ -78,7 +78,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -94,11 +94,11 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                   ),
                 ),
-                SizedBox(width: 15,),
+                const SizedBox(width: 15,),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20 * 2, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 20 * 2, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),

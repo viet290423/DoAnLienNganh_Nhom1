@@ -19,7 +19,7 @@ class AuthPage extends StatelessWidget {
           if (snapshot.hasData) {
             return MainPage(cameras: cameras);
           } else {
-            return LoginOrRegisterPage();
+            return const LoginOrRegisterPage();
           }
         },
       ),

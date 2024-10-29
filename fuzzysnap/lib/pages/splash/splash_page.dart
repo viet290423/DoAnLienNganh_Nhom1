@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../../app/dimensions.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();

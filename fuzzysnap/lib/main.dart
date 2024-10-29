@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: '/',
           routes: {
-            '/': (context) => SplashScreen(),
+            '/': (context) => const SplashScreen(),
             '/auth_page': (context) => AuthPage(cameras: cameras),
             '/login_register_page': (context) => const LoginOrRegisterPage(),
             '/main_page': (context) => MainPage(
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             '/camera_page': (context) => CameraPage(
                   cameras: cameras,
                 ),
-            '/chat_page': (context) =>  ChatListPage(),
+            '/chat_page': (context) =>  const ChatListPage(),
           },
         );
       }),

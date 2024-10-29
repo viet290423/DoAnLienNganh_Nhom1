@@ -51,7 +51,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       // Điều hướng về trang đăng nhập và xoá hết các trang trước đó
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/auth_page',
+        '/',
         (route) => false,
       );
     } catch (error) {
