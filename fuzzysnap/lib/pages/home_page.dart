@@ -32,8 +32,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 showSearch(
                   context: context,
-                  delegate:
-                      FriendSearchDelegate(),
+                  delegate: FriendSearchDelegate(),
                 );
               },
             ),
@@ -42,16 +41,13 @@ class HomePage extends StatelessWidget {
         forceMaterialTransparency: true,
         centerTitle: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 30),
-          child: Text(
-            'FUZZYSNAP',
-            style: TextStyle(
-              // color: Theme.of(context).colorScheme.primary,
-              fontSize: 20,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-            ),
+        title: Text(
+          'FUZZYSNAP',
+          style: TextStyle(
+            // color: Theme.of(context).colorScheme.primary,
+            fontSize: 20,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),

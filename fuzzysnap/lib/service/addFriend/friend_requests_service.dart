@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fuzzysnap/service/chat_service.dart';
 
 class FriendRequestsService {
-  final ChatService _chatService = ChatService(); // Tạo một instance của ChatService
+  final ChatService _chatService =
+      ChatService(); // Tạo một instance của ChatService
 
   // Lấy các yêu cầu kết bạn của người dùng hiện tại
   Future<List<Map<String, dynamic>>> getFriendRequests() async {
@@ -18,10 +19,10 @@ class FriendRequestsService {
 
       // Lấy các yêu cầu kết bạn từ collection FriendRequests
       DocumentSnapshot<Map<String, dynamic>> requestsDoc =
-      await FirebaseFirestore.instance
-          .collection('FriendRequests')
-          .doc(currentUser.uid)
-          .get();
+          await FirebaseFirestore.instance
+              .collection('FriendRequests')
+              .doc(currentUser.uid)
+              .get();
 
       if (!requestsDoc.exists) {
         debugPrint('Không có yêu cầu kết bạn.');
@@ -29,7 +30,8 @@ class FriendRequestsService {
       }
 
       // Trả về danh sách yêu cầu kết bạn
-      return List<Map<String, dynamic>>.from(requestsDoc.data()?['requests'] ?? []);
+      return List<Map<String, dynamic>>.from(
+          requestsDoc.data()?['requests'] ?? []);
     } catch (e) {
       debugPrint('Lỗi khi lấy yêu cầu kết bạn: $e');
       return [];
@@ -49,10 +51,11 @@ class FriendRequestsService {
       String currentUserEmail = currentUser.email ?? '';
 
       // Tìm kiếm thông tin của người gửi trong collection 'User'
-      DocumentSnapshot<Map<String, dynamic>> currentDoc = await FirebaseFirestore.instance
-          .collection('User')
-          .doc(currentUserEmail)
-          .get();
+      DocumentSnapshot<Map<String, dynamic>> currentDoc =
+          await FirebaseFirestore.instance
+              .collection('User')
+              .doc(currentUserEmail)
+              .get();
 
       if (!currentDoc.exists) {
         debugPrint('Không tìm thấy thông tin người dùng hiện tại.');
@@ -62,7 +65,8 @@ class FriendRequestsService {
       Map<String, dynamic>? currentData = currentDoc.data();
       String currentUserUid = currentData?['uid'] ?? '';
       String currentUsername = currentData?['username'] ?? 'Unknown';
-      String currentProfileImage = currentData?['profile_image'] ?? 'default_profile_image_url';
+      String currentProfileImage = currentData?['profile_image'] ??
+          'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg';
 
       // Xóa yêu cầu kết bạn khỏi FriendRequests sau khi chấp nhận
       await _removeFriendRequest(currentUserUid, friendRequest);
@@ -71,10 +75,12 @@ class FriendRequestsService {
       await _addFriendToUser(currentUserEmail, friendRequest);
 
       // Thêm người dùng hiện tại vào danh sách bạn bè của người gửi yêu cầu
-      await _addFriendToRequester(friendRequest, currentUserUid, currentUserEmail, currentUsername, currentProfileImage);
+      await _addFriendToRequester(friendRequest, currentUserUid,
+          currentUserEmail, currentUsername, currentProfileImage);
 
       // Tạo chat box mới
-      await _chatService.getChatBoxId(currentUserUid, friendRequest['uid']); // Tạo chat box mới
+      await _chatService.getChatBoxId(
+          currentUserUid, friendRequest['uid']); // Tạo chat box mới
 
       debugPrint('Đã chấp nhận yêu cầu kết bạn.');
     } catch (e) {
@@ -101,7 +107,8 @@ class FriendRequestsService {
   }
 
   // Hàm phụ trợ để xóa yêu cầu kết bạn
-  Future<void> _removeFriendRequest(String userId, Map<String, dynamic> friendRequest) async {
+  Future<void> _removeFriendRequest(
+      String userId, Map<String, dynamic> friendRequest) async {
     await FirebaseFirestore.instance
         .collection('FriendRequests')
         .doc(userId)
@@ -111,7 +118,8 @@ class FriendRequestsService {
   }
 
   // Hàm phụ trợ để thêm bạn vào danh sách bạn bè của người dùng
-  Future<void> _addFriendToUser(String currentUserEmail, Map<String, dynamic> friendRequest) async {
+  Future<void> _addFriendToUser(
+      String currentUserEmail, Map<String, dynamic> friendRequest) async {
     await FirebaseFirestore.instance
         .collection('User')
         .doc(currentUserEmail)
@@ -128,7 +136,12 @@ class FriendRequestsService {
   }
 
   // Hàm phụ trợ để thêm người dùng hiện tại vào danh sách bạn bè của người gửi yêu cầu
-  Future<void> _addFriendToRequester(Map<String, dynamic> friendRequest, String currentUserUid, String currentUserEmail, String currentUsername, String currentProfileImage) async {
+  Future<void> _addFriendToRequester(
+      Map<String, dynamic> friendRequest,
+      String currentUserUid,
+      String currentUserEmail,
+      String currentUsername,
+      String currentProfileImage) async {
     await FirebaseFirestore.instance
         .collection('User')
         .doc(friendRequest['email'])

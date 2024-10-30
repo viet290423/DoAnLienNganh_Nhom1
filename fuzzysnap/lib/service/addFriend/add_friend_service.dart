@@ -15,9 +15,10 @@ class AddFriendService {
       }
 
       String currentUserEmail = currentUser.email ?? '';
-      
+
       // Tìm kiếm thông tin của người gửi trong collection 'User'
-      DocumentSnapshot<Map<String, dynamic>> senderDoc = await FirebaseFirestore.instance
+      DocumentSnapshot<Map<String, dynamic>> senderDoc = await FirebaseFirestore
+          .instance
           .collection('User')
           .doc(currentUserEmail)
           .get();
@@ -32,7 +33,8 @@ class AddFriendService {
       Map<String, dynamic>? senderData = senderDoc.data();
       String senderUID = senderData?['uid'] ?? '';
       String senderUsername = senderData?['username'] ?? 'Unknown';
-      String senderProfileImage = senderData?['profile_image'] ?? 'default_profile_image_url';
+      String senderProfileImage = senderData?['profile_image'] ??
+          'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg';
       String senderEmail = senderData?['email'] ?? '';
       Timestamp requestTime = Timestamp.now(); // Lấy thời gian gửi yêu cầu
 
@@ -55,21 +57,25 @@ class AddFriendService {
 
       if (recipientSnapshot.exists) {
         // Lấy mảng 'requests' từ dữ liệu người nhận
-        List<dynamic> requests = (recipientSnapshot.data() as Map<String, dynamic>?)?['requests'] ?? [];
+        List<dynamic> requests =
+            (recipientSnapshot.data() as Map<String, dynamic>?)?['requests'] ??
+                [];
 
         // Kiểm tra xem người gửi đã tồn tại trong danh sách yêu cầu chưa
-        bool alreadyRequested = requests.any((request) => request['email'] == senderEmail);
+        bool alreadyRequested =
+            requests.any((request) => request['email'] == senderEmail);
 
         if (alreadyRequested) {
           debugPrint('Yêu cầu kết bạn đã được gửi trước đó.');
-          
+
           return;
         }
       }
 
       // Nếu chưa gửi yêu cầu, cập nhật hoặc thêm mới yêu cầu kết bạn vào mảng yêu cầu kết bạn của người nhận
       await recipientDoc.update({
-        'requests': FieldValue.arrayUnion([senderInfo]) // Thêm thông tin người gửi vào mảng 'requests'
+        'requests': FieldValue.arrayUnion(
+            [senderInfo]) // Thêm thông tin người gửi vào mảng 'requests'
       }).catchError((error) async {
         // Nếu doc của người nhận chưa tồn tại, tạo mới
         await recipientDoc.set({

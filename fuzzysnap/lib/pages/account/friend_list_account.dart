@@ -60,7 +60,17 @@ class _FriendListPageState extends State<FriendListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(title: const Text('Danh sách bạn bè')),
+      appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              CupertinoIcons.back,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: const Text('Danh sách bạn bè')),
       body: isLoading
           ? const Center(
               child:

@@ -135,7 +135,13 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                                   ? NetworkImage(user!['profile_image'])
                                   : null,
                               child: user?['profile_image'] == null
-                                  ? const Icon(Icons.person, size: 32)
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 32,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    )
                                   : null,
                             ),
                           ],
@@ -160,7 +166,7 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                             SizedBox(
                               // height: 20,
                               child: Text(
-                                formattedTime, 
+                                formattedTime,
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 12,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,14 +72,14 @@ class _SettingPageState extends State<SettingPage> {
                       MaterialPageRoute(
                           builder: (context) => const ChangeInformation()),
                     );
-                  }, textColor: Colors.black),
+                  }, textColor: Theme.of(context).colorScheme.onSecondary),
                   buildSettingItem('Change Password', onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const ChangePasswordPage()),
                     );
-                  }, textColor: Colors.black),
+                  }, textColor: Theme.of(context).colorScheme.onSecondary),
                 ],
               ),
               const SizedBox(height: 20),
@@ -90,7 +91,7 @@ class _SettingPageState extends State<SettingPage> {
                     'Language',
                     trailing: const Text('English'),
                     onTap: () {},
-                    textColor: Colors.black,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   buildSettingItem(
                     'Dark Mode',
@@ -99,7 +100,7 @@ class _SettingPageState extends State<SettingPage> {
                         value: notifier.isDark,
                         onChanged: (value) => notifier.changeTheme()),
                     onTap: () {},
-                    textColor: Colors.black,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   buildSettingItem(
                     'Notification',
@@ -113,7 +114,7 @@ class _SettingPageState extends State<SettingPage> {
                       },
                     ),
                     onTap: () {},
-                    textColor: Colors.black,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ],
               ),
@@ -123,9 +124,11 @@ class _SettingPageState extends State<SettingPage> {
                 title: 'About us',
                 children: [
                   buildSettingItem('Website',
-                      onTap: () {}, textColor: Colors.black),
+                      onTap: () {},
+                      textColor: Theme.of(context).colorScheme.onSecondary),
                   buildSettingItem('Help',
-                      onTap: () {}, textColor: Colors.black),
+                      onTap: () {},
+                      textColor: Theme.of(context).colorScheme.onSecondary),
                 ],
               ),
               const SizedBox(height: 20),
@@ -139,7 +142,7 @@ class _SettingPageState extends State<SettingPage> {
                     onTap: () {
                       signUserOut(context);
                     },
-                    textColor: Colors.black,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   buildSettingItem(
                     'Delete account',
@@ -165,14 +168,15 @@ class _SettingPageState extends State<SettingPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          backgroundColor: Colors.white, // Đặt nền màu trắng
+          backgroundColor: Colors.white,
           title: const Center(
             child: Text(
               'Do you really want to delete your account?',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -198,7 +202,8 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pop();
+                      _showPasswordConfirmationDialog(context);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -218,5 +223,113 @@ class _SettingPageState extends State<SettingPage> {
         );
       },
     );
+  }
+
+// Hàm hiển thị hộp thoại yêu cầu nhập lại mật khẩu
+  void _showPasswordConfirmationDialog(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    String password = "";
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.white,
+          title: const Center(
+            child: Text(
+              'Confirm Password to Delete Account',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          content: TextField(
+            onChanged: (value) {
+              password = value;
+            },
+            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Enter your password',
+            ),
+          ),
+          actions: <Widget>[
+            Center(
+              child: TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Đóng dialog
+                  await _deleteAccount(password, scaffoldMessenger, context);
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Confirm',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Hàm thực hiện xóa tài khoản khi đã nhập mật khẩu
+  Future<void> _deleteAccount(String password,
+      ScaffoldMessengerState scaffoldMessenger, BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && password.isNotEmpty) {
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: password,
+        );
+
+        // Xác thực lại người dùng
+        await user.reauthenticateWithCredential(credential);
+
+        // Xóa tài liệu người dùng trên Firestore
+        await FirebaseFirestore.instance
+            .collection('User')
+            .doc(user.email)
+            .delete();
+
+        // Xóa tài khoản Firebase
+        await user.delete();
+        await FirebaseAuth.instance.signOut();
+
+        // Hiển thị thông báo thành công
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text("Account deleted successfully.")),
+        );
+
+        // Chờ 1 giây trước khi điều hướng
+        await Future.delayed(const Duration(seconds: 1));
+
+        // Kiểm tra nếu widget vẫn còn mounted trước khi điều hướng
+        if (context.mounted) {
+          Navigator.pushReplacementNamed(context, '/');
+        }
+      } else {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+              content: Text("Password is required to delete account.")),
+        );
+      }
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text("Failed to delete account: $e")),
+      );
+    }
   }
 }

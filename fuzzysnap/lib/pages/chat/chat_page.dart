@@ -89,13 +89,31 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  String _formatTimestamp(DateTime timestamp) {
+    // Định dạng giờ và phút: "HH:mm"
+    return "${timestamp.day.toString().padLeft(2, '0')}/"
+        "${timestamp.month.toString().padLeft(2, '0')} "
+        "${timestamp.hour.toString().padLeft(2, '0')}:"
+        "${timestamp.minute.toString().padLeft(2, '0')}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         forceMaterialTransparency: true,
+        leading: IconButton(
+          icon: const Icon(
+            CupertinoIcons.back,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             CircleAvatar(
               radius: 20,
@@ -164,50 +182,95 @@ class _ChatPageState extends State<ChatPage> {
                     itemBuilder: (context, index) {
                       var messageData = messages[index];
                       bool isSentByMe = messageData['senderUid'] == userUid;
-                      return Align(
-                        alignment: isSentByMe
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: isSentByMe
-                                ? Colors.blue[300]
-                                : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                messageData['message'],
+
+                      // Lấy thời gian tạo của tin nhắn hiện tại
+                      DateTime currentMessageTime =
+                          messageData['createdAt'].toDate();
+                      DateTime? previousMessageTime;
+
+                      // Nếu không phải là tin nhắn đầu tiên, lấy thời gian của tin nhắn trước đó
+                      if (index > 0) {
+                        previousMessageTime =
+                            messages[index - 1]['createdAt'].toDate();
+                      }
+
+                      // Kiểm tra xem đây có phải là cuối nhóm tin nhắn từ đối phương không
+                      bool showAvatar = !isSentByMe &&
+                          (index == messages.length - 1 || // Tin nhắn cuối cùng
+                              messages[index + 1]['senderUid'] !=
+                                  messageData[
+                                      'senderUid']); // Tin nhắn cuối của nhóm
+
+                      return Column(
+                        children: [
+                          // Hiển thị thời gian ở giữa nếu cần
+                          if (previousMessageTime == null ||
+                              currentMessageTime
+                                      .difference(previousMessageTime)
+                                      .inMinutes >=
+                                  1)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                _formatTimestamp(
+                                    currentMessageTime), // Hàm format timestamp
                                 style: TextStyle(
-                                  color:
-                                      isSentByMe ? Colors.white : Colors.black,
-                                  fontSize: 16,
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                messageData['createdAt'] != null
-                                    ? messageData['createdAt']
-                                        .toDate()
-                                        .toString()
-                                        .substring(11, 16)
-                                    : '',
-                                style: TextStyle(
+                            ),
+
+                          // Tin nhắn
+                          Row(
+                            mainAxisAlignment: isSentByMe
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              // Nếu là tin nhắn cuối nhóm từ đối phương, hiển thị ảnh đại diện
+                              if (showAvatar) ...[
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: NetworkImage(
+                                      widget.friendData['profile_image'] ??
+                                          'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              // Nếu là tin nhắn của đối phương, đặt ảnh đại diện sau tin nhắn
+                              if (!isSentByMe && !showAvatar) ...[
+                                const SizedBox(width: 40),
+                              ],
+                              // Tin nhắn của người gửi hoặc đối phương
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 12),
+                                decoration: BoxDecoration(
                                   color: isSentByMe
-                                      ? Colors.white
-                                      : Colors.black54,
-                                  fontSize: 12,
+                                      ? Colors.blue[300]
+                                      : Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  messageData['message'],
+                                  style: TextStyle(
+                                    color: isSentByMe
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       );
                     },
                   );

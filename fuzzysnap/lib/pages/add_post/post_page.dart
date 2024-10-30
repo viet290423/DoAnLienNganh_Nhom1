@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/database/firestore.dart';
 import 'package:fuzzysnap/widget/my_textfield.dart';
@@ -41,6 +42,15 @@ class _PostPageState extends State<PostPage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Post Your Image'),
+        leading: IconButton(
+          icon: const Icon(
+            CupertinoIcons.back,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: isLoading
           ? const Center(

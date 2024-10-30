@@ -26,20 +26,21 @@ class _ChatListPageState extends State<ChatListPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Padding(
-          padding: EdgeInsets.only(left: 30),
-          child: Text(
-            'Messages',
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-            ),
+        centerTitle: true,
+        title: const Text(
+          'Messages',
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('chatBox').snapshots(),
+        stream: _firestore
+            .collection('chatBox')
+            .orderBy('lastMessageTime', descending: true) // Order by latest
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -49,7 +50,7 @@ class _ChatListPageState extends State<ChatListPage> {
           }
 
           final chatBoxes = snapshot.data!.docs;
-          // Lọc các cuộc trò chuyện chỉ cho người dùng hiện tại
+
           final currentUserChatBoxes = chatBoxes.where((doc) {
             final data = doc.data() as Map<String, dynamic>;
             final String senderUid = data['userUid'];
@@ -65,14 +66,12 @@ class _ChatListPageState extends State<ChatListPage> {
             itemCount: currentUserChatBoxes.length,
             itemBuilder: (context, index) {
               final chatBoxData =
-              currentUserChatBoxes[index].data() as Map<String, dynamic>;
+                  currentUserChatBoxes[index].data() as Map<String, dynamic>;
               final String senderUid = chatBoxData['userUid'];
               final String receiverUid = chatBoxData['friendUid'];
-              // Xác định UID của bạn bè
-              final String friendUid =
-              (senderUid == currentUserUid) ? receiverUid : senderUid;
-              // Lấy chatBoxId từ chatBoxData
               final String chatBoxId = currentUserChatBoxes[index].id;
+              final String friendUid =
+                  (senderUid == currentUserUid) ? receiverUid : senderUid;
 
               return FutureBuilder<QuerySnapshot>(
                 future: _firestore
@@ -82,7 +81,7 @@ class _ChatListPageState extends State<ChatListPage> {
                 builder: (context, friendSnapshot) {
                   if (friendSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return const LinearProgressIndicator();
+                    return const LinearProgressIndicator(minHeight: 1);
                   }
                   if (friendSnapshot.hasError ||
                       !friendSnapshot.hasData ||
@@ -92,9 +91,8 @@ class _ChatListPageState extends State<ChatListPage> {
                     );
                   }
                   final friendData = friendSnapshot.data!.docs.first.data()
-                  as Map<String, dynamic>?;
+                      as Map<String, dynamic>?;
 
-                  // Kiểm tra xem friendData có null không
                   if (friendData == null) {
                     return const ListTile(
                       title: Text('Không tìm thấy thông tin người dùng'),
@@ -104,12 +102,12 @@ class _ChatListPageState extends State<ChatListPage> {
                   final String username =
                       friendData['username'] ?? 'Không có tên';
                   final String profileImage = friendData['profile_image'] ?? '';
-                  final String lastMessage =
-                      chatBoxData['lastMessage'] ?? '';
+                  final String lastMessage = chatBoxData['lastMessage'] ?? '';
+                  final bool isReadByReceiver =
+                      chatBoxData['isReadByReceiver'] ?? true;
                   final Timestamp? lastMessageTime =
-                  chatBoxData['lastMessageTime'];
+                      chatBoxData['lastMessageTime'];
 
-                  // Định dạng thời gian
                   String timeString = '';
                   if (lastMessageTime != null) {
                     final DateTime dateTime = lastMessageTime.toDate();
@@ -121,48 +119,44 @@ class _ChatListPageState extends State<ChatListPage> {
                       timeString = '${diff.inHours} giờ trước';
                     } else {
                       timeString =
-                      '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute}';
+                          '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute}';
                     }
-                  }
-
-                  // Kiểm tra nếu không có tin nhắn nào
-                  if (lastMessage.isEmpty) {
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: profileImage.isNotEmpty
-                            ? NetworkImage(profileImage)
-                            : null,
-                      ),
-                      title: Text(username),
-                      subtitle: const Text('Bắt đầu cuộc trò chuyện ngay bây giờ',
-                          style: TextStyle(color: Colors.grey)),
-                      onTap: () {
-                        // Chuyển đến màn hình trò chuyện khi người dùng bấm vào
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              friendData: friendData,
-                              chatBoxId: chatBoxId,
-                            ),
-                          ),
-                        );
-                      },
-                    );
                   }
 
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundImage: profileImage.isNotEmpty
                           ? NetworkImage(profileImage)
-                          : null,
+                          : const NetworkImage(
+                              'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
                     ),
                     title: Text(username),
-                    subtitle: Text(lastMessage,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    trailing: Text(timeString),
-                    onTap: () {
-                      // Chuyển đến màn hình trò chuyện khi người dùng bấm vào
+                    subtitle: Text(
+                      lastMessage,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: isReadByReceiver
+                            ? FontWeight.normal
+                            : FontWeight.bold, // Unread indicator
+                        color: isReadByReceiver ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                    trailing: Column(
+                      children: [
+                        Text(timeString),
+                        if (!isReadByReceiver)
+                          const Icon(Icons.circle,
+                              size: 8, color: Colors.red), // Red dot for unread
+                      ],
+                    ),
+                    onTap: () async {
+                      await _firestore
+                          .collection('chatBox')
+                          .doc(chatBoxId)
+                          .update({
+                        'isReadByReceiver': true,
+                      });
                       Navigator.push(
                         context,
                         MaterialPageRoute(

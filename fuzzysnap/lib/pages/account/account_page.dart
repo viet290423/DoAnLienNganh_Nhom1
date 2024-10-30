@@ -171,7 +171,13 @@ class _AccountPageState extends State<AccountPage> {
                                       : null,
                               child: _selectedImage == null &&
                                       user?['profile_image'] == null
-                                  ? const Icon(Icons.person, size: 100)
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 100,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    )
                                   : null,
                             ),
                             if (_isLoading) const CircularProgressIndicator(),

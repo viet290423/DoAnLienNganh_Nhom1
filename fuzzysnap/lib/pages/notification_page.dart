@@ -42,15 +42,13 @@ class _NotificationPageState extends State<NotificationPage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 30),
-          child: Text(
-            'Notifications',
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-            ),
+        centerTitle: true,
+        title: const Text(
+          'Notifications',
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
@@ -66,24 +64,64 @@ class _NotificationPageState extends State<NotificationPage> {
                 Map<String, dynamic> request = friendRequests[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(request['profile_image'] ??
-                        'default_profile_image_url'),
+                    backgroundImage: (request['profile_image'] != null &&
+                            request['profile_image'].isNotEmpty)
+                        ? NetworkImage(request['profile_image'])
+                        : AssetImage("assets/images/avatar.png"),
                   ),
-                  title: Text(request['username'] ?? 'Unknown'),
-                  subtitle: Text(request['email'] ?? ''),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.check, color: Colors.green),
-                        onPressed: () => _acceptFriendRequest(request),
+                      Text(
+                        "${request['username'] ?? 'Unknown'} has sent you a Friend Request",
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.red),
-                        onPressed: () => _declineFriendRequest(request),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              _acceptFriendRequest(request);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.black),
+                            ),
+                            child: const Text(
+                              'Confirm',
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () {
+                              _declineFriendRequest(request);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Decline'),
+                          )
+                          // IconButton(
+                          //   icon: const Icon(Icons.check, color: Colors.green),
+                          //   onPressed: () => _acceptFriendRequest(request),
+                          // ),
+                          // IconButton(
+                          //   icon: const Icon(Icons.clear, color: Colors.red),
+                          //   onPressed: () => _declineFriendRequest(request),
+                          // ),
+                        ],
                       ),
                     ],
                   ),
+                  // Nếu không muốn hiển thị subtitle, có thể bỏ đi
+                  // subtitle: Text(request['email'] ?? ''),
                 );
               },
             ),
