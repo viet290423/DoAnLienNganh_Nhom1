@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
           boxShadow: [
             BoxShadow(
               color: Colors.black
-                  .withOpacity(0.1), // Màu và độ trong suốt của shadow
+                  .withOpacity(0.2), // Màu và độ trong suốt của shadow
               spreadRadius: 2, // Bán kính mở rộng
               blurRadius: 10, // Độ mờ của shadow
               offset:
@@ -97,7 +97,7 @@ class _MainPageState extends State<MainPage> {
             cameras: widget.cameras); // Truyền cameras cho CameraPage
       case 3:
         return const ChatListPage();
-      case 4: 
+      case 4:
         return const AccountPage();
       default:
         return HomePage();

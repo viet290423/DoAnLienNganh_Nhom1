@@ -93,6 +93,7 @@ class _ChangeInformationState extends State<ChangeInformation> {
             ),
             const SizedBox(height: 10),
             TextField(
+              cursorColor: Colors.black,
               controller: _usernameController,
               readOnly: !_isEditing,
               style: const TextStyle(

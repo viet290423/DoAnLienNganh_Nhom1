@@ -41,9 +41,9 @@ class HomePage extends StatelessWidget {
         forceMaterialTransparency: true,
         centerTitle: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Text(
+        title: const Text(
           'FUZZYSNAP',
-          style: TextStyle(
+          style: const TextStyle(
             // color: Theme.of(context).colorScheme.primary,
             fontSize: 20,
             fontFamily: 'Montserrat',

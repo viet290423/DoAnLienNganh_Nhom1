@@ -219,6 +219,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
         children: [
           Expanded(
             child: TextField(
+              cursorColor: Theme.of(context).colorScheme.onSecondary,
               controller: _commentController,
               decoration: InputDecoration(
                 filled: true,

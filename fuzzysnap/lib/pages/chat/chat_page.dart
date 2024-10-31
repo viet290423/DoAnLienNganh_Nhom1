@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fuzzysnap/service/chat_service.dart';
+import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
   final Map<String, dynamic> friendData;
@@ -12,42 +13,66 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   final ChatService _chatService = ChatService();
   final TextEditingController messageController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   String? chatBoxId;
   String? userUid;
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _initializeChatBox();
+    WidgetsBinding.instance.addObserver(
+        this); // Đăng ký observer để theo dõi các thay đổi trong ứng dụng
+    _focusNode
+        .addListener(_handleFocusChange); // Lắng nghe sự thay đổi của FocusNode
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Hàm xử lý thay đổi chiều cao bàn phím
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom();
+  }
+
+  // Hàm xử lý sự kiện khi `TextField` được focus
+  void _handleFocusChange() {
+    if (_focusNode.hasFocus) {
+      _scrollToBottom();
+    }
   }
 
   // Hàm khởi tạo hộp chat
   Future<void> _initializeChatBox() async {
     if (currentUser != null) {
       String currentUserEmail = currentUser!.email ?? '';
-      // Tìm kiếm thông tin của người gửi trong collection 'User'
       DocumentSnapshot<Map<String, dynamic>> senderDoc = await FirebaseFirestore
           .instance
           .collection('User')
           .doc(currentUserEmail)
           .get();
-      // Lấy uid của người dùng
       if (senderDoc.exists && senderDoc.data() != null) {
-        userUid = senderDoc.data()!['uid']; // Lấy uid từ tài liệu
+        userUid = senderDoc.data()!['uid'];
       }
       debugPrint("UID của người dùng: $userUid");
-      // Kiểm tra friendData và lấy UID của bạn
       if (widget.friendData.containsKey('uid')) {
         String friendUid = widget.friendData['uid'];
         debugPrint("UID của bạn bè: $friendUid");
-        // Lấy chatBoxId
         chatBoxId = await _chatService.getChatBoxId(userUid!, friendUid);
         setState(() {
-          // Cuộn đến cuối khi hộp chat được khởi tạo
           _scrollToBottom();
         });
       } else {
@@ -59,12 +84,12 @@ class _ChatPageState extends State<ChatPage> {
   // Hàm gửi tin nhắn
   void _sendMessage() {
     if (messageController.text.isNotEmpty && chatBoxId != null) {
-      String message = messageController.text.trim(); // Loại bỏ khoảng trắng
-      String senderUid = userUid!; // Sử dụng userUid đã lấy
+      String message = messageController.text.trim();
+      String senderUid = userUid!;
       String receiverUid = widget.friendData['uid'];
       String senderUsername = currentUser!.email ?? 'Người dùng';
       String receiverUsername = widget.friendData['username'] ?? 'Bạn';
-      // Gửi tin nhắn
+
       _chatService.sendMessage(
         chatBoxId: chatBoxId!,
         senderUid: senderUid,
@@ -73,9 +98,7 @@ class _ChatPageState extends State<ChatPage> {
         receiverUsername: receiverUsername,
         message: message,
       );
-      // Xóa nội dung của TextField sau khi gửi
       messageController.clear();
-      // Tự động cuộn đến tin nhắn mới nhất
       _scrollToBottom();
     }
   }
@@ -87,14 +110,6 @@ class _ChatPageState extends State<ChatPage> {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
-  }
-
-  String _formatTimestamp(DateTime timestamp) {
-    // Định dạng giờ và phút: "HH:mm"
-    return "${timestamp.day.toString().padLeft(2, '0')}/"
-        "${timestamp.month.toString().padLeft(2, '0')} "
-        "${timestamp.hour.toString().padLeft(2, '0')}:"
-        "${timestamp.minute.toString().padLeft(2, '0')}";
   }
 
   @override
@@ -152,10 +167,8 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
-      // Danh sách tin nhắn sẽ được hiển thị ở đây
       body: Column(
         children: [
-          // Danh sách tin nhắn
           Expanded(
             child: StreamBuilder<DocumentSnapshot>(
               stream: chatBoxId != null
@@ -169,7 +182,6 @@ class _ChatPageState extends State<ChatPage> {
                   List<dynamic> messages = (snapshot.data!.data()
                           as Map<String, dynamic>)['messages'] ??
                       [];
-                  // Cuộn đến tin nhắn cuối cùng khi danh sách tin nhắn thay đổi
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (_scrollController.hasClients) {
                       _scrollController
@@ -183,27 +195,22 @@ class _ChatPageState extends State<ChatPage> {
                       var messageData = messages[index];
                       bool isSentByMe = messageData['senderUid'] == userUid;
 
-                      // Lấy thời gian tạo của tin nhắn hiện tại
                       DateTime currentMessageTime =
                           messageData['createdAt'].toDate();
                       DateTime? previousMessageTime;
 
-                      // Nếu không phải là tin nhắn đầu tiên, lấy thời gian của tin nhắn trước đó
                       if (index > 0) {
                         previousMessageTime =
                             messages[index - 1]['createdAt'].toDate();
                       }
 
-                      // Kiểm tra xem đây có phải là cuối nhóm tin nhắn từ đối phương không
                       bool showAvatar = !isSentByMe &&
-                          (index == messages.length - 1 || // Tin nhắn cuối cùng
+                          (index == messages.length - 1 ||
                               messages[index + 1]['senderUid'] !=
-                                  messageData[
-                                      'senderUid']); // Tin nhắn cuối của nhóm
+                                  messageData['senderUid']);
 
                       return Column(
                         children: [
-                          // Hiển thị thời gian ở giữa nếu cần
                           if (previousMessageTime == null ||
                               currentMessageTime
                                       .difference(previousMessageTime)
@@ -213,8 +220,7 @@ class _ChatPageState extends State<ChatPage> {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
-                                _formatTimestamp(
-                                    currentMessageTime), // Hàm format timestamp
+                                _formatTimestamp(currentMessageTime),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[600],
@@ -222,14 +228,11 @@ class _ChatPageState extends State<ChatPage> {
                                 ),
                               ),
                             ),
-
-                          // Tin nhắn
                           Row(
                             mainAxisAlignment: isSentByMe
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: [
-                              // Nếu là tin nhắn cuối nhóm từ đối phương, hiển thị ảnh đại diện
                               if (showAvatar) ...[
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8),
@@ -242,11 +245,9 @@ class _ChatPageState extends State<ChatPage> {
                                   ),
                                 ),
                               ],
-                              // Nếu là tin nhắn của đối phương, đặt ảnh đại diện sau tin nhắn
                               if (!isSentByMe && !showAvatar) ...[
                                 const SizedBox(width: 40),
                               ],
-                              // Tin nhắn của người gửi hoặc đối phương
                               Container(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 10),
@@ -264,7 +265,7 @@ class _ChatPageState extends State<ChatPage> {
                                     color: isSentByMe
                                         ? Colors.white
                                         : Colors.black,
-                                    fontSize: 16,
+                                    fontSize: 18,
                                   ),
                                 ),
                               ),
@@ -279,16 +280,12 @@ class _ChatPageState extends State<ChatPage> {
               },
             ),
           ),
-          // Phần nhập tin nhắn và nút gửi
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                // Icon ảnh với hiệu ứng nổi
                 GestureDetector(
-                  onTap: () {
-                    // Hàm xử lý chọn ảnh
-                  },
+                  onTap: () {},
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -307,16 +304,14 @@ class _ChatPageState extends State<ChatPage> {
                         Icons.photo,
                         color: Colors.blueAccent,
                       ),
-                      onPressed: () {
-                        // Hàm xử lý chọn ảnh
-                      },
+                      onPressed: () {},
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                // TextField với viền bo tròn và độ nổi
                 Expanded(
                   child: TextField(
+                    focusNode: _focusNode,
                     controller: messageController,
                     decoration: InputDecoration(
                       filled: true,
@@ -372,6 +367,7 @@ class _ChatPageState extends State<ChatPage> {
                     child: const Icon(
                       Icons.send,
                       color: Colors.white,
+                      size: 24,
                     ),
                   ),
                 ),
@@ -381,5 +377,17 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
     );
+  }
+
+  // Hàm định dạng thời gian tin nhắn
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    if (now.difference(timestamp).inDays == 0) {
+      return DateFormat.Hm().format(timestamp);
+    } else if (now.difference(timestamp).inDays == 1) {
+      return "Hôm qua, ${DateFormat.Hm().format(timestamp)}";
+    } else {
+      return DateFormat('dd/MM/yyyy, HH:mm').format(timestamp);
+    }
   }
 }

@@ -103,8 +103,6 @@ class _ChatListPageState extends State<ChatListPage> {
                       friendData['username'] ?? 'Không có tên';
                   final String profileImage = friendData['profile_image'] ?? '';
                   final String lastMessage = chatBoxData['lastMessage'] ?? '';
-                  final bool isReadByReceiver =
-                      chatBoxData['isReadByReceiver'] ?? true;
                   final Timestamp? lastMessageTime =
                       chatBoxData['lastMessageTime'];
 
@@ -125,29 +123,32 @@ class _ChatListPageState extends State<ChatListPage> {
 
                   return ListTile(
                     leading: CircleAvatar(
+                      radius: 25,
                       backgroundImage: profileImage.isNotEmpty
                           ? NetworkImage(profileImage)
                           : const NetworkImage(
                               'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
                     ),
-                    title: Text(username),
+                    title: Text(
+                      username,
+                      style: TextStyle(fontSize: 18),
+                    ),
                     subtitle: Text(
                       lastMessage,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontWeight: isReadByReceiver
-                            ? FontWeight.normal
-                            : FontWeight.bold, // Unread indicator
-                        color: isReadByReceiver ? Colors.grey : Colors.black,
-                      ),
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Color.fromARGB(255, 86, 86, 86)),
                     ),
                     trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(timeString),
-                        if (!isReadByReceiver)
-                          const Icon(Icons.circle,
-                              size: 8, color: Colors.red), // Red dot for unread
+                        Text(
+                          timeString,
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ],
                     ),
                     onTap: () async {

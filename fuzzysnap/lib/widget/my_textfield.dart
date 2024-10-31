@@ -13,6 +13,7 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      cursorColor: Colors.black,
       controller: controller,
       obscureText: obscureText,
       style: const TextStyle(
