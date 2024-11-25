@@ -14,6 +14,7 @@ class _ChatListPageState extends State<ChatListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late String currentUserUid;
+  final Map<String, Map<String, dynamic>> friendDataCache = {};
 
   @override
   void initState() {
@@ -39,7 +40,8 @@ class _ChatListPageState extends State<ChatListPage> {
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
             .collection('chatBox')
-            .orderBy('lastMessageTime', descending: true) // Order by latest
+            .orderBy('lastMessageTime',
+                descending: true) // Sắp xếp theo thời gian
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -73,6 +75,16 @@ class _ChatListPageState extends State<ChatListPage> {
               final String friendUid =
                   (senderUid == currentUserUid) ? receiverUid : senderUid;
 
+              // Kiểm tra xem dữ liệu bạn bè đã được lưu trữ trong bộ nhớ đệm hay chưa
+              if (friendDataCache.containsKey(friendUid)) {
+                return _buildChatTile(
+                  friendDataCache[friendUid]!,
+                  chatBoxData,
+                  chatBoxId,
+                );
+              }
+
+              // Nếu chưa có trong bộ nhớ đệm, lấy dữ liệu từ Firestore
               return FutureBuilder<QuerySnapshot>(
                 future: _firestore
                     .collection('User')
@@ -90,91 +102,132 @@ class _ChatListPageState extends State<ChatListPage> {
                       title: Text('Lỗi khi lấy thông tin người dùng'),
                     );
                   }
+
                   final friendData = friendSnapshot.data!.docs.first.data()
-                      as Map<String, dynamic>?;
+                      as Map<String, dynamic>;
+                  friendDataCache[friendUid] = friendData; // Lưu vào cache
 
-                  if (friendData == null) {
-                    return const ListTile(
-                      title: Text('Không tìm thấy thông tin người dùng'),
-                    );
-                  }
-
-                  final String username =
-                      friendData['username'] ?? 'Không có tên';
-                  final String profileImage = friendData['profile_image'] ?? '';
-                  final String lastMessage = chatBoxData['lastMessage'] ?? '';
-                  final Timestamp? lastMessageTime =
-                      chatBoxData['lastMessageTime'];
-
-                  String timeString = '';
-                  if (lastMessageTime != null) {
-                    final DateTime dateTime = lastMessageTime.toDate();
-                    final now = DateTime.now();
-                    final diff = now.difference(dateTime);
-                    if (diff.inMinutes < 60) {
-                      timeString = '${diff.inMinutes} phút trước';
-                    } else if (diff.inHours < 24) {
-                      timeString = '${diff.inHours} giờ trước';
-                    } else {
-                      timeString =
-                          '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute}';
-                    }
-                  }
-
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 25,
-                      backgroundImage: profileImage.isNotEmpty
-                          ? NetworkImage(profileImage)
-                          : const NetworkImage(
-                              'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
-                    ),
-                    title: Text(
-                      username,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    subtitle: Text(
-                      lastMessage,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Color.fromARGB(255, 86, 86, 86)),
-                    ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          timeString,
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    onTap: () async {
-                      await _firestore
-                          .collection('chatBox')
-                          .doc(chatBoxId)
-                          .update({
-                        'isReadByReceiver': true,
-                      });
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            friendData: friendData,
-                            chatBoxId: chatBoxId,
-                          ),
-                        ),
-                      );
-                    },
-                  );
+                  return _buildChatTile(friendData, chatBoxData, chatBoxId);
                 },
               );
             },
           );
         },
       ),
+    );
+  }
+
+  // Hàm xây dựng widget ChatTile
+  Widget _buildChatTile(
+    Map<String, dynamic> friendData,
+    Map<String, dynamic> chatBoxData,
+    String chatBoxId,
+  ) {
+    final String username = friendData['username'] ?? 'Không có tên';
+    final String profileImage = friendData['profile_image'] ?? '';
+    final String lastMessage = chatBoxData['lastMessage'] ?? '';
+    final Timestamp? lastMessageTime = chatBoxData['lastMessageTime'];
+    final unreadCount = chatBoxData['unreadMessages']?[currentUserUid] ?? 0;
+
+    // Format thời gian
+    String timeString = '';
+    if (lastMessageTime != null) {
+      final DateTime dateTime = lastMessageTime.toDate();
+      final now = DateTime.now();
+      final diff = now.difference(dateTime);
+      if (diff.inMinutes < 60) {
+        timeString = '${diff.inMinutes} phút trước';
+      } else if (diff.inHours < 24) {
+        timeString = '${diff.inHours} giờ trước';
+      } else {
+        timeString =
+            '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute}';
+      }
+    }
+
+    return ListTile(
+      leading: Stack(
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundImage: profileImage.isNotEmpty
+                ? NetworkImage(profileImage)
+                : const NetworkImage(
+                    'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'),
+          ),
+          if (unreadCount > 0) // Hiển thị chấm đỏ nếu có tin nhắn chưa đọc
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                width: 14,
+                height: 14,
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+        ],
+      ),
+      title: Text(
+        username,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      subtitle: Text(
+        lastMessage,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
+          color: unreadCount > 0
+              ? Colors.black
+              : const Color.fromARGB(255, 86, 86, 86),
+        ),
+      ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            timeString,
+            style: const TextStyle(fontSize: 12),
+          ),
+          if (unreadCount > 0) // Hiển thị số tin nhắn chưa đọc
+            Container(
+              margin: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                unreadCount.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
+      onTap: () async {
+        await _firestore.collection('chatBox').doc(chatBoxId).update({
+          'unreadMessages.$currentUserUid': 0, // Đặt lại tin nhắn chưa đọc
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              friendData: friendData,
+              chatBoxId: chatBoxId,
+            ),
+          ),
+        );
+      },
     );
   }
 }
