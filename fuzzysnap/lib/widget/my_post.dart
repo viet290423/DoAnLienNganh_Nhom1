@@ -195,22 +195,6 @@ class _MyPostState extends State<MyPost> with AutomaticKeepAliveClientMixin {
                       },
                       itemBuilder: (context) => [
                         const PopupMenuItem(
-                          value: 'Edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, color: Colors.blue),
-                              SizedBox(width: 10),
-                              Text(
-                                'Edit',
-                                style: TextStyle(
-                                  // color: Colors.black,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuItem(
                           value: 'Remove',
                           child: Row(
                             children: [

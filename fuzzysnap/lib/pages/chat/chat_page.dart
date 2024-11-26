@@ -292,10 +292,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
                         ),
                       ],
                     ),
@@ -346,7 +346,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                     onSubmitted: (value) => _sendMessage(),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 5),
                 // Nút gửi với hiệu ứng nổi
                 GestureDetector(
                   onTap: _sendMessage,
@@ -357,15 +357,15 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
+                          color: Colors.blue.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
                         ),
                       ],
                     ),
                     child: const Icon(
-                      Icons.send,
+                      Icons.send_sharp,
                       color: Colors.white,
                       size: 24,
                     ),

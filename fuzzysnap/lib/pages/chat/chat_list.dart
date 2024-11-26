@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/pages/chat/ai_chat_page.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -16,12 +17,22 @@ class _ChatListPageState extends State<ChatListPage> {
   late String currentUserUid;
   final Map<String, Map<String, dynamic>> friendDataCache = {};
 
+  final Map<String, dynamic> chatBotData = {
+    'username': 'ChatBot',
+    'profile_image':
+        'assets/images/chatbot_logo.png', // Hình ảnh đại diện của ChatBot
+    'lastMessage': 'Start chatting with AI',
+    'lastMessageTime': DateTime.now(), // Thời gian tin nhắn cuối
+    'unreadMessages': 0,
+  };
+
   @override
   void initState() {
     super.initState();
     currentUserUid = _auth.currentUser!.uid; // Lấy UID của người dùng hiện tại
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +51,7 @@ class _ChatListPageState extends State<ChatListPage> {
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
             .collection('chatBox')
-            .orderBy('lastMessageTime',
-                descending: true) // Sắp xếp theo thời gian
+            .orderBy('lastMessageTime', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -53,6 +63,7 @@ class _ChatListPageState extends State<ChatListPage> {
 
           final chatBoxes = snapshot.data!.docs;
 
+          // Lọc ra các chat box của người dùng hiện tại
           final currentUserChatBoxes = chatBoxes.where((doc) {
             final data = doc.data() as Map<String, dynamic>;
             final String senderUid = data['userUid'];
@@ -60,22 +71,36 @@ class _ChatListPageState extends State<ChatListPage> {
             return senderUid == currentUserUid || receiverUid == currentUserUid;
           }).toList();
 
-          if (currentUserChatBoxes.isEmpty) {
+          // Chèn ChatBot vào danh sách
+          final List<Map<String, dynamic>> combinedChatList = [
+            chatBotData, // ChatBot luôn ở trên đầu
+            ...currentUserChatBoxes.map((doc) => {
+                  ...doc.data() as Map<String, dynamic>,
+                  'id': doc.id,
+                })
+          ];
+
+          if (combinedChatList.isEmpty) {
             return const Center(child: Text('Không có cuộc trò chuyện nào.'));
           }
 
           return ListView.builder(
-            itemCount: currentUserChatBoxes.length,
+            itemCount: combinedChatList.length,
             itemBuilder: (context, index) {
-              final chatBoxData =
-                  currentUserChatBoxes[index].data() as Map<String, dynamic>;
+              final chatBoxData = combinedChatList[index];
+
+              // Kiểm tra nếu là ChatBot
+              if (chatBoxData == chatBotData) {
+                return _buildChatBotTile();
+              }
+
               final String senderUid = chatBoxData['userUid'];
               final String receiverUid = chatBoxData['friendUid'];
-              final String chatBoxId = currentUserChatBoxes[index].id;
+              final String chatBoxId = chatBoxData['id'];
               final String friendUid =
                   (senderUid == currentUserUid) ? receiverUid : senderUid;
 
-              // Kiểm tra xem dữ liệu bạn bè đã được lưu trữ trong bộ nhớ đệm hay chưa
+              // Kiểm tra cache
               if (friendDataCache.containsKey(friendUid)) {
                 return _buildChatTile(
                   friendDataCache[friendUid]!,
@@ -84,7 +109,7 @@ class _ChatListPageState extends State<ChatListPage> {
                 );
               }
 
-              // Nếu chưa có trong bộ nhớ đệm, lấy dữ liệu từ Firestore
+              // Nếu chưa có, tải dữ liệu bạn bè
               return FutureBuilder<QuerySnapshot>(
                 future: _firestore
                     .collection('User')
@@ -185,7 +210,7 @@ class _ChatListPageState extends State<ChatListPage> {
           fontSize: 16,
           fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
           color: unreadCount > 0
-              ? Colors.black
+              ? Theme.of(context).colorScheme.onSecondary
               : const Color.fromARGB(255, 86, 86, 86),
         ),
       ),
@@ -224,6 +249,39 @@ class _ChatListPageState extends State<ChatListPage> {
             builder: (context) => ChatPage(
               friendData: friendData,
               chatBoxId: chatBoxId,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildChatBotTile() {
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 25,
+        backgroundImage: AssetImage(chatBotData['profile_image']),
+      ),
+      title: Text(
+        chatBotData['username'],
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        chatBotData['lastMessage'],
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 16),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AIChatDetailScreen(
+              userName: chatBotData['username'],
+              userImage: chatBotData['profile_image'],
             ),
           ),
         );
