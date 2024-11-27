@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzysnap/provider/friend_requests_provider.dart';
 import 'package:fuzzysnap/service/addFriend/friend_requests_service.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -10,13 +12,19 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   FriendRequestsService friendRequestsService = FriendRequestsService();
+  final NotificationProvider notificationProvider = NotificationProvider();
+
   List<Map<String, dynamic>> friendRequests = [];
 
   @override
-  void initState() {
-    super.initState();
-    _loadFriendRequests();
-  }
+  @override
+void initState() {
+  super.initState();
+  _loadFriendRequests();
+
+ 
+}
+
 
   Future<void> _loadFriendRequests() async {
     List<Map<String, dynamic>> requests =

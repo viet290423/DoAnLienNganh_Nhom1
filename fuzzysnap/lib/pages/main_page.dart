@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
@@ -6,10 +7,13 @@ import 'package:fuzzysnap/pages/chat/chat_list.dart';
 import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
+import 'package:fuzzysnap/provider/friend_requests_provider.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:iconsax/iconsax.dart';
 
 class MainPage extends StatefulWidget {
+  static final GlobalKey<_MainPageState> mainPageKey = GlobalKey(); // Thêm Key
+
   final List<CameraDescription> cameras;
   const MainPage({super.key, required this.cameras});
 
@@ -19,6 +23,22 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
+  final NotificationProvider notificationProvider = NotificationProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      notificationProvider.listenToFriendRequests(currentUser.uid);
+    }
+  }
+
+  void navigateToTab(int index) {
+    setState(() {
+      _currentIndex = index; // Chuyển tab bằng cách thay đổi _currentIndex
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +50,10 @@ class _MainPageState extends State<MainPage> {
           color: Theme.of(context).colorScheme.onPrimary,
           boxShadow: [
             BoxShadow(
-              color: Colors.black
-                  .withOpacity(0.2), // Màu và độ trong suốt của shadow
-              spreadRadius: 2, // Bán kính mở rộng
-              blurRadius: 10, // Độ mờ của shadow
-              offset:
-                  const Offset(0, -2), // Hướng của shadow (ở trên - y là số âm)
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
           ],
         ),
@@ -93,8 +111,7 @@ class _MainPageState extends State<MainPage> {
       case 1:
         return const NotificationPage();
       case 2:
-        return CameraPage(
-            cameras: widget.cameras); // Truyền cameras cho CameraPage
+        return CameraPage(cameras: widget.cameras);
       case 3:
         return const ChatListPage();
       case 4:

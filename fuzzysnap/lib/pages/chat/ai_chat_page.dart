@@ -71,7 +71,7 @@ class _AIChatDetailScreenState extends State<AIChatDetailScreen> {
   }
 
   Future<String> callAIChatAPI(String input) async {
-    final apiKey = '';
+    final apiKey = 'AIzaSyANTcBLr4piaR1h8OB6BSgWD97aBx2rmVg';
     final url =
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey';
 

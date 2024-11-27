@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fuzzysnap/auth/auth_page.dart';
 import 'package:fuzzysnap/auth/login_or_register_page.dart';
 import 'package:fuzzysnap/firebase_options.dart';
@@ -11,8 +12,11 @@ import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/main_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
 import 'package:fuzzysnap/pages/splash/splash_page.dart';
+import 'package:fuzzysnap/provider/friend_requests_provider.dart';
 import 'package:fuzzysnap/provider/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +25,22 @@ Future<void> main() async {
   );
   final cameras = await availableCameras();
 
-  runApp(MyApp(cameras: cameras));
+  tz.initializeTimeZones(); // Khởi tạo múi giờ
+
+  // Khởi tạo và yêu cầu quyền cho thông báo
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
+
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => NotificationProvider()),
+    ],
+    child: MyApp(cameras: cameras),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -41,7 +60,7 @@ class MyApp extends StatelessWidget {
 
           //Our custom theme applied
           darkTheme: notifier.isDark ? notifier.darkTheme : notifier.lightTheme,
-    
+
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple,
@@ -69,7 +88,7 @@ class MyApp extends StatelessWidget {
             '/camera_page': (context) => CameraPage(
                   cameras: cameras,
                 ),
-            '/chat_page': (context) =>  const ChatListPage(),
+            '/chat_page': (context) => const ChatListPage(),
           },
         );
       }),
