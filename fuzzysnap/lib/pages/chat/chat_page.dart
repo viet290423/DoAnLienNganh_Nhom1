@@ -297,14 +297,13 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               if (isImage)
                                 GestureDetector(
                                   onTap: () {
-                                    /// Mở ảnh toàn màn hình
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FullScreenImage(imageUrl: messageData['imageUrl'] ?? ''),
-                                      ),
+                                    /// Mở ảnh toàn màn hình trong hộp thoại
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => FullScreenImageDialog(imageUrl: messageData['image'] ?? ''),
                                     );
                                   },
+
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
