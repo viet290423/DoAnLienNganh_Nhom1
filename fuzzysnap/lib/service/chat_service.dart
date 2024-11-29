@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 
 class ChatService {
@@ -44,6 +47,7 @@ class ChatService {
     required String senderUsername,
     required String receiverUsername,
     required String message,
+    required String imageUrl,
   }) async {
     try {
       Timestamp timestamp = Timestamp.now(); // Thời gian gửi tin nhắn
@@ -58,11 +62,15 @@ class ChatService {
         'createdAt': timestamp,
         'isRead': false, // Tin nhắn chưa được đọc
       };
+      // Kiểm tra nếu có ảnh thì lưu URL của ảnh vào tin nhắn
+      if (imageUrl.isNotEmpty) {
+        newMessage['image'] = imageUrl; // Lưu URL của ảnh vào tin nhắn
+      }
 
       // Cập nhật hộp chat với tin nhắn mới và trạng thái chưa đọc
       await _firestore.collection('chatBox').doc(chatBoxId).update({
         'messages': FieldValue.arrayUnion([newMessage]),
-        'lastMessage': message,
+        'lastMessage': message.isNotEmpty ? message : 'Ảnh đã được gửi',
         'lastMessageTime': timestamp,
         'unreadMessages.$receiverUid': FieldValue.increment(1),
       });
@@ -70,6 +78,28 @@ class ChatService {
     } catch (e) {
       debugPrint('Lỗi khi gửi tin nhắn: $e');
       throw Exception('Không thể gửi tin nhắn');
+    }
+  }
+
+  Future<String> _uploadImage(File image, String chatBoxId) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      String filePath = 'chat_images/$chatBoxId/$fileName.jpg';
+
+      // Upload ảnh lên Firebase Storage
+      await firebase_storage.FirebaseStorage.instance
+          .ref(filePath)
+          .putFile(image);
+
+      // Lấy URL của ảnh
+      String imageUrl = await firebase_storage.FirebaseStorage.instance
+          .ref(filePath)
+          .getDownloadURL();
+
+      return imageUrl;
+    } catch (e) {
+      debugPrint('Lỗi khi upload ảnh: $e');
+      throw Exception('Không thể upload ảnh');
     }
   }
 

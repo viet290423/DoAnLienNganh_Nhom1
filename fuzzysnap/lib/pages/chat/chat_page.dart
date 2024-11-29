@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fuzzysnap/pages/chat/chat_image_full_screen.dart';
 import 'package:fuzzysnap/service/chat_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
@@ -21,6 +26,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   String? chatBoxId;
   String? userUid;
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _imagePicker = ImagePicker(); // Thêm ImagePicker
 
   @override
   void initState() {
@@ -97,9 +103,50 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         senderUsername: senderUsername,
         receiverUsername: receiverUsername,
         message: message,
+        imageUrl: "",
       );
       messageController.clear();
       _scrollToBottom();
+    }
+  }
+
+  // Hàm gửi ảnh
+  Future<void> _sendImage() async {
+    try {
+      final XFile? pickedImage = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+      );
+      if (pickedImage != null) {
+        String imagePath = pickedImage.path;
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        UploadTask uploadTask = FirebaseStorage.instance
+            .ref('chat_images/$fileName')
+            .putFile(File(imagePath));
+        TaskSnapshot snapshot = await uploadTask;
+        String imageUrl = await snapshot.ref.getDownloadURL();
+
+        if (chatBoxId != null) {
+          String senderUid = userUid!;
+          String receiverUid = widget.friendData['uid'];
+          String senderUsername = currentUser!.email ?? 'Người dùng';
+          String receiverUsername = widget.friendData['username'] ?? 'Bạn';
+
+          // Gửi tin nhắn với hình ảnh
+          _chatService.sendMessage(
+            chatBoxId: chatBoxId!,
+            senderUid: senderUid,
+            receiverUid: receiverUid,
+            senderUsername: senderUsername,
+            receiverUsername: receiverUsername,
+            message: "", // Không có tin nhắn văn bản
+            imageUrl: imageUrl,
+          );
+          _scrollToBottom();
+        }
+      }
+    } catch (e) {
+      debugPrint("Lỗi khi gửi ảnh: $e");
     }
   }
 
@@ -133,8 +180,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             CircleAvatar(
               radius: 20,
               backgroundImage: NetworkImage(
-                widget.friendData['profile_image'] ??
-                    'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
+                widget.friendData['profile_image'] ?? '',
               ),
             ),
             const SizedBox(width: 15),
@@ -194,6 +240,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                     itemBuilder: (context, index) {
                       var messageData = messages[index];
                       bool isSentByMe = messageData['senderUid'] == userUid;
+                      bool isImage = messageData['image'] != null ;
 
                       DateTime currentMessageTime =
                           messageData['createdAt'].toDate();
@@ -208,7 +255,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           (index == messages.length - 1 ||
                               messages[index + 1]['senderUid'] !=
                                   messageData['senderUid']);
-
+                      
                       return Column(
                         children: [
                           if (previousMessageTime == null ||
@@ -239,8 +286,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                   child: CircleAvatar(
                                     radius: 16,
                                     backgroundImage: NetworkImage(
-                                      widget.friendData['profile_image'] ??
-                                          'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
+                                      widget.friendData['profile_image'] ?? '',
                                     ),
                                   ),
                                 ),
@@ -248,27 +294,54 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               if (!isSentByMe && !showAvatar) ...[
                                 const SizedBox(width: 40),
                               ],
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 10),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 12),
-                                decoration: BoxDecoration(
-                                  color: isSentByMe
-                                      ? Colors.blue[300]
-                                      : Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  messageData['message'],
-                                  style: TextStyle(
+                              if (isImage)
+                                GestureDetector(
+                                  onTap: () {
+                                    /// Mở ảnh toàn màn hình trong hộp thoại
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => FullScreenImageDialog(imageUrl: messageData['image'] ?? ''),
+                                    );
+                                  },
+
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 10),
+                                    width: 150,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            messageData['image'] ?? ''),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else ...[
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 12),
+                                  decoration: BoxDecoration(
                                     color: isSentByMe
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 18,
+                                        ? Colors.blue[300]
+                                        : Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    messageData['message'],
+                                    style: TextStyle(
+                                      color: isSentByMe
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ],
@@ -285,7 +358,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: _sendImage,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -304,7 +377,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                         Icons.photo,
                         color: Colors.blueAccent,
                       ),
-                      onPressed: () {},
+                      onPressed: _sendImage,
                     ),
                   ),
                 ),
