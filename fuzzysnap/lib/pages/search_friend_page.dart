@@ -1,5 +1,6 @@
 // Delegate để tìm kiếm bạn bè
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/service/search_friend_service.dart';
 
@@ -21,7 +22,11 @@ class FriendSearchDelegate extends SearchDelegate {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.arrow_back),
+      icon: Icon(
+        CupertinoIcons.back,
+        size: 30,
+        color: Theme.of(context).colorScheme.onSecondary,
+      ),
       onPressed: () {
         close(context, null); // Đóng màn hình tìm kiếm
       },

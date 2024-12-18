@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/account_page.dart';
 import 'package:fuzzysnap/pages/add_post/camera_page.dart';
 import 'package:fuzzysnap/pages/chat/chat_list.dart';
-import 'package:fuzzysnap/pages/chat/chat_page.dart';
 import 'package:fuzzysnap/pages/home_page.dart';
 import 'package:fuzzysnap/pages/notification_page.dart';
 import 'package:fuzzysnap/provider/friend_requests_provider.dart';
@@ -12,22 +11,31 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:iconsax/iconsax.dart';
 
 class MainPage extends StatefulWidget {
-  static final GlobalKey<_MainPageState> mainPageKey = GlobalKey(); // Thêm Key
+  static final GlobalKey<_MainPageState> mainPageKey = GlobalKey(); // Key để truy cập state
 
   final List<CameraDescription> cameras;
-  const MainPage({super.key, required this.cameras});
+  final String? selectedPostId; // Nhận tham số selectedPostId
+
+  const MainPage({super.key, required this.cameras, this.selectedPostId});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _currentIndex = 0;
+  int _currentIndex = 0; // Tab hiện tại
   final NotificationProvider notificationProvider = NotificationProvider();
 
   @override
   void initState() {
     super.initState();
+
+    // Nếu có selectedPostId, đảm bảo chuyển đến HomePage (tab index = 0)
+    if (widget.selectedPostId != null) {
+      _currentIndex = 0;
+    }
+
+    // Lắng nghe thông báo yêu cầu kết bạn
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       notificationProvider.listenToFriendRequests(currentUser.uid);
@@ -44,7 +52,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: _buildPage(_currentIndex), // Load lại page mỗi khi đổi tab
+      body: _buildPage(_currentIndex), // Hiển thị page theo tab hiện tại
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.onPrimary,
@@ -107,7 +115,8 @@ class _MainPageState extends State<MainPage> {
   Widget _buildPage(int index) {
     switch (index) {
       case 0:
-        return HomePage();
+        // Truyền selectedPostId vào HomePage nếu có
+        return HomePage(selectedPostId: widget.selectedPostId);
       case 1:
         return const NotificationPage();
       case 2:
@@ -115,9 +124,9 @@ class _MainPageState extends State<MainPage> {
       case 3:
         return const ChatListPage();
       case 4:
-        return const AccountPage();
+        return AccountPage(cameras: widget.cameras,);
       default:
-        return HomePage();
+        return const HomePage();
     }
   }
 }

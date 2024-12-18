@@ -5,18 +5,37 @@ import 'package:fuzzysnap/widget/my_post.dart';
 import 'package:fuzzysnap/pages/search_friend_page.dart';
 import 'package:iconsax/iconsax.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  final String? selectedPostId; // Tham số nhận ID bài đăng được chọn
 
-  // firestore access
+  const HomePage({super.key, this.selectedPostId});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final FirestoreDatabase database = FirestoreDatabase();
+  late PageController _pageController; // Điều khiển PageView
+  int _initialPageIndex = 0; // Index ban đầu của bài đăng
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getUserStream(
-      String userEmail) {
-    return FirebaseFirestore.instance
-        .collection('User')
-        .doc(userEmail)
-        .snapshots();
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(); // Khởi tạo PageController
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose(); // Giải phóng PageController
+    super.dispose();
+  }
+
+  // Tìm vị trí index của bài đăng có PostId trùng với selectedPostId
+  int _getIndexForSelectedPost(
+      List<DocumentSnapshot> posts, String selectedPostId) {
+    return posts.indexWhere((post) =>
+        (post.data() as Map<String, dynamic>)['PostId'] == selectedPostId);
   }
 
   @override
@@ -24,6 +43,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        forceMaterialTransparency: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -38,13 +58,11 @@ class HomePage extends StatelessWidget {
             ),
           )
         ],
-        forceMaterialTransparency: true,
         centerTitle: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
           'FUZZYSNAP',
-          style: const TextStyle(
-            // color: Theme.of(context).colorScheme.primary,
+          style: TextStyle(
             fontSize: 20,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w800,
@@ -80,8 +98,22 @@ class HomePage extends StatelessWidget {
 
           final posts = snapshot.data!;
 
-          // return as a list
+          // Xác định index của bài đăng cần hiển thị nếu có selectedPostId
+          if (widget.selectedPostId != null) {
+            int selectedIndex =
+                _getIndexForSelectedPost(posts, widget.selectedPostId!);
+            if (selectedIndex != -1 && _initialPageIndex == 0) {
+              // Chỉ cuộn một lần
+              _initialPageIndex = selectedIndex;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _pageController.jumpToPage(selectedIndex);
+              });
+            }
+          }
+
+          // Hiển thị danh sách bài đăng
           return PageView.builder(
+            controller: _pageController, // Điều khiển cuộn
             scrollDirection: Axis.vertical,
             itemCount: posts.length,
             itemBuilder: (context, index) {
@@ -94,7 +126,10 @@ class HomePage extends StatelessWidget {
               Timestamp timestamp = post['TimeStamp'] ?? Timestamp.now();
 
               return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                stream: getUserStream(userEmail),
+                stream: FirebaseFirestore.instance
+                    .collection('User')
+                    .doc(userEmail)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const SizedBox.shrink();

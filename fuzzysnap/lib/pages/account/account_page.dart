@@ -1,16 +1,20 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzysnap/pages/account/friend_list_account.dart';
+import 'package:fuzzysnap/pages/home_page.dart';
+import 'package:fuzzysnap/pages/main_page.dart';
 import 'package:fuzzysnap/pages/setting/setting_page.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+  final List<CameraDescription> cameras;
+  const AccountPage({super.key, required this.cameras});
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -25,6 +29,8 @@ class _AccountPageState extends State<AccountPage> {
 
   // Controller để quản lý TextField của username
   final TextEditingController _usernameController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -325,17 +331,29 @@ class _AccountPageState extends State<AccountPage> {
                             itemCount: posts.length,
                             itemBuilder: (context, index) {
                               var post = posts[index];
+                              var postId = post['PostId'];
                               var imageUrl = post[
                                   'ImageUrl']; // Assuming each post has an 'ImageUrl'
-
                               return GestureDetector(
                                 onTap: () {
                                   // Handle post click if needed
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MainPage(
+                                        selectedPostId:
+                                            postId, cameras: widget.cameras, 
+                                      ),
+                                    ),
+                                  );
+                                  print("Post ID: $postId");
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Container(
                                     decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Color(0xFF6D9886), width: 3.0),
                                       borderRadius: BorderRadius.circular(10),
                                       image: DecorationImage(
                                         image: NetworkImage(imageUrl),

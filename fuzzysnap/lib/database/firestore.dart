@@ -32,11 +32,21 @@ class FirestoreDatabase {
 
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
       List<dynamic> listFriend = userData?['listFriend'] ?? [];
-      return listFriend.map<String>((friend) => friend['email'].toString()).toList();
+      return listFriend
+          .map<String>((friend) => friend['email'].toString())
+          .toList();
     } catch (e) {
       print('Lỗi khi lấy danh sách bạn bè: $e');
       return [];
     }
+  }
+
+  Future<List<DocumentSnapshot>> getAllPostsOnce() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Posts') // Thay bằng tên collection của bạn
+        .orderBy('TimeStamp', descending: true)
+        .get();
+    return snapshot.docs;
   }
 
   // Lấy Stream của tất cả các bài đăng (người dùng và bạn bè)
@@ -135,4 +145,3 @@ class FirestoreDatabase {
     }
   }
 }
-
